@@ -1,0 +1,125 @@
+<div class="modal-body">
+    <div id="printme" name="printme">
+        @foreach ($voucher->histories as $action)
+            <div class="col-md-12 timeline-dot">
+
+                <div class="social-timelines p-relative">
+                    <div class="row timeline-right p-t-15">
+                        <div class="col-2 col-sm-2 col-xl-1">
+                            <div class="social-timelines-left">
+                                @if ($action->outcome == 'initialized')
+                                    <div class="rounded-circle bg-primary p-1">
+                                        <h3 class="text-center m-auto"><i
+                                                class="feather icon-file-text"></i></h3>
+                                    </div>
+                                @elseif ($action->outcome == "Approve")
+                                    <div class="rounded-circle bg-success p-1">
+                                        <h3 class="text-center m-auto"><i
+                                                class="feather icon-thumbs-up"></i></h3>
+                                    </div>
+                                @elseif ($action->outcome == "Reject")
+                                    <div class="rounded-circle bg-warning p-1">
+                                        <h3 class="text-center m-auto"><i
+                                                class="feather icon-alert-triangle"></i></h3>
+                                    </div>
+                                @elseif ($action->outcome == "Demote")
+                                    <div class="rounded-circle bg-danger">
+                                        <h3 class="text-center py-auto"><i
+                                                class="feather icon-thumbs-down"></i></h3>
+                                    </div>
+                                @else
+                                    <div class="rounded-circle bg-success p-1">
+                                        <h3 class="text-center m-auto"><i
+                                                class="feather icon-thumbs-up"></i></h3>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                        <div class="col-10 col-sm-10 col-xl-11 p-l-5 p-b-15">
+                            <div class="card z-depth-bottom-1 mt-2">
+                                <div class="card-block  bg-primary p-1">
+                                    <div class="d-flex align-items-center">
+                                        <div class="col-md-8">
+                                            <i class=" feather icon-edit"></i>
+                                            Created by : {{ $action->employee->name() }}
+                                        </div>
+                                        <div
+                                            class="social-time  col-md-4 d-flex justify-content-end">
+                                            {{ $action->created_at }}
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-block post-timelines">
+                                    <div class="chat-header f-w-600">Action
+                                        : {{ $action->outcome }}</div>
+                                    <div class="social-time text-muted"><strong>Comment
+                                            :</strong>{{ $action->comment }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+
+            @if ($voucher->category == 'Order Voucher')
+                <div class="timeline-item">
+                    <h3 class="timeline-header">Order History </h3>
+                </div>
+
+                @foreach ($voucher->order->histories as $action)
+                    <div class="col-md-12 timeline-dot">
+
+                        <div class="social-timelines p-relative">
+                            <div class="row timeline-right p-t-15">
+                                <div class="col-2 col-sm-2 col-xl-1">
+                                    <div class="social-timelines-left">
+
+                                        @if ($action->outcome == "reversed")
+                                            <div class="rounded-circle bg-warning p-1">
+                                                <h3 class="text-center m-auto"><i
+                                                        class="feather icon-alert-triangle"></i></h3>
+                                            </div>
+                                        @else
+                                            <div class="rounded-circle bg-success p-1">
+                                                <h3 class="text-center m-auto"><i
+                                                        class="feather icon-thumbs-up"></i></h3>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="col-10 col-sm-10 col-xl-11 p-l-5 p-b-15">
+                                    <div class="card z-depth-bottom-1 mt-2">
+                                        <div class="card-block  bg-primary p-1">
+                                            <div class="d-flex align-items-center">
+                                                <div class="col-md-8">
+                                                    <i class=" feather icon-edit"></i>
+                                                    Created by : {{ $action->approver->name() }}
+                                                </div>
+                                                <div
+                                                    class="social-time  col-md-4 d-flex justify-content-end">
+                                                    {{ $action->created_at }}
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="card-block post-timelines">
+                                            <div class="chat-header f-w-600">Stage
+                                                : {{ $action->stage }}</div>
+                                            <div class="chat-header f-w-600">Action
+                                                : {{ $action->outcome }}</div>
+                                            <div class="social-time text-muted"><strong>Comment
+                                                    :</strong>{{ $action->comments }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            @endif
+
+
+    </div>
+</div>
