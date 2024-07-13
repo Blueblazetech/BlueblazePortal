@@ -96,6 +96,7 @@
                             </div>
                         </div>
                         <div class="card-body">
+                            <h1>Client Side</h1>
                             <livewire:jobs.posted-job />
                         </div>
                     </div>
