@@ -3,15 +3,19 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use Carbon\Carbon;
 use App\Models\Age;
 use App\Models\Job;
+use App\Models\User;
 use App\Models\Salary;
 use App\Models\JobSkill;
 use App\Models\JobTitle;
 use App\Models\Locations;
 use App\Models\Experience;
+use App\Models\PortalUser;
 use App\Models\JobCategory;
 use App\Models\JobPosition;
+use App\Models\JobApplicant;
 use Illuminate\Http\Request;
 use App\Models\JobAttachment;
 use App\Models\EmploymentType;
@@ -169,11 +173,11 @@ class HomeController extends Controller
                 'locations' => $locations,
                 'titles' => $titles,
                 'categories' => $categories,
-                'types'=>$types,
-                'experience'=>$experience,
-                'salary'=>$salary,
-                'academics'=>$academics,
-                'ages'=>$ages
+                'types' => $types,
+                'experience' => $experience,
+                'salary' => $salary,
+                'academics' => $academics,
+                'ages' => $ages
 
             ]
         );
@@ -299,5 +303,36 @@ class HomeController extends Controller
         $userId = Auth::user()->id;
 
         return view('client.profileSettings');
+    }
+
+    public function applyNow(Request $request)
+    {
+
+        // dd($request);
+        try{
+            Db::beginTransaction();
+            $user = PortalUser::where('user_id',$request->userId);
+            $app = new JobApplicant;
+            $app->portal_user_id=$user->id;
+            $app->user_id = Auth::user()->id;
+            $app->job_id = $request->jobId;
+            $app->name = $user->name;
+            $app->surname = $user->surname;
+            $app->contact = $user->contact;
+            $app->address = $user->address;
+            $app->email = $user->email;
+            $app->resume = $user->resume;
+            $app->video = $user->video;
+            $app->date_applied = Carbon::now();
+            $app->rank = $app->calculateScore();
+            $app->save();
+
+        }catch(Exception $e){
+            Db::rollBack();
+            return back()->with('error', 'Job Application Failed'.$e);
+        }
+
+
+
     }
 }

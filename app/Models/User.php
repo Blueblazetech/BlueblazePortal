@@ -78,4 +78,8 @@ class User extends Authenticatable
         return $this->hasmany(Role::class, 'user_id');
     }
 
+    public function portalUser(){
+
+        return $this->hasOne(PortalUser::class, 'portal_user_id');
+    }
 }
