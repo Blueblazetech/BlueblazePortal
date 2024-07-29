@@ -80,6 +80,6 @@ class User extends Authenticatable
 
     public function portalUser(){
 
-        return $this->hasOne(PortalUser::class, 'portal_user_id');
+        return $this->hasOne(PortalUser::class, 'user_id');
     }
 }

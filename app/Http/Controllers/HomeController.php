@@ -21,6 +21,8 @@ use App\Models\JobAttachment;
 use App\Models\EmploymentType;
 use App\Models\JobCertificate;
 use App\Models\JobPostHistory;
+use App\Models\UserAttachment;
+use App\Models\UserExperience;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\AcademicQualification;
@@ -301,19 +303,21 @@ class HomeController extends Controller
     {
 
         $userId = Auth::user()->id;
+        $user = PortalUser::where('user_id', $userId)->first();
 
-        return view('client.profileSettings');
+        return view('client.profileSettings', ['user' => $user]);
     }
 
     public function applyNow(Request $request)
     {
 
+        $user = PortalUser::where('user_id', $request->userId);
         // dd($request);
-        try{
+        try {
             Db::beginTransaction();
-            $user = PortalUser::where('user_id',$request->userId);
+
             $app = new JobApplicant;
-            $app->portal_user_id=$user->id;
+            $app->portal_user_id = $user->id;
             $app->user_id = Auth::user()->id;
             $app->job_id = $request->jobId;
             $app->name = $user->name;
@@ -326,13 +330,104 @@ class HomeController extends Controller
             $app->date_applied = Carbon::now();
             $app->rank = $app->calculateScore();
             $app->save();
+            DB::commit();
 
-        }catch(Exception $e){
-            Db::rollBack();
-            return back()->with('error', 'Job Application Failed'.$e);
+        } catch (Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Job Application Failed' . $e);
         }
 
 
 
+    }
+
+    public function personalDetail(Request $request)
+    {
+        // dd($request);
+        try {
+            DB::beginTransaction();
+            $user = new PortalUser;
+            $user->user_id = Auth::user()->id;
+            $user->name = $request->firstname;
+            $user->surname = $request->surname;
+            $user->gender = $request->gender;
+            $user->marital_status = $request->marital;
+            $user->contact_1 = $request->phone1;
+            $user->contact_2 = $request->phone2;
+            $user->physical_address = $request->physical;
+            $user->email_address = $request->mail;
+            $user->nationality = $request->nationality;
+            $user->title = $request->title;
+            $user->save();
+
+            if ($request->hasFile('nationalId')) {
+
+                $natId = $request->file('nationalId');
+                $path = $this->jobFiles($natId);
+                $userId = new UserAttachment;
+                $userId->user_id = Auth::user()->id;
+                $userId->name = 'natoinal_id';
+                $userId->path = $path;
+                $userId->save();
+            }
+
+            if ($request->hasFile('usercv')) {
+
+                $cv = $request->file('usercv');
+                $path = $this->jobFiles($cv);
+                $userCv = new UserAttachment;
+                $userCv->user_id = Auth::user()->id;
+                $userCv->name = 'user_cv';
+                $userCv->path = $path;
+                $userCv->save();
+            }
+            if ($request->hasFile('userv')) {
+
+                $video = $request->file('userv');
+                $path = $this->jobFiles($video);
+                $userVideo = new UserAttachment;
+                $userVideo->user_id = Auth::user()->id;
+                $userVideo->name = 'user_video';
+                $userVideo->path = $path;
+                $userVideo->save();
+            }
+
+
+            DB::commit();
+            return back()->with('success', 'Details updated successfully');
+        } catch (Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'failed to update personal details' . $e);
+
+        }
+
+
+
+    }
+
+    public function userExperience(Request $request)
+    {
+
+        // dd($request);
+
+        try {
+
+            DB::beginTransaction();
+            $exp = new UserExperience;
+            $exp->user_id = Auth::user()->portalUser->id;
+            $exp->company = $request->company;
+            $exp->position = $request->position;
+            $exp->fromdate = $request->fromDate;
+            $exp->toDate = $request->toDate;
+            $exp->decription = $request->description;
+            $exp->save();
+            DB::commit();
+            return back()->with('success', 'Experience saved');
+        } catch (Exception $e) {
+
+            return back()->with('error', 'Failed to add experience records' . $e);
+
+
+        }
     }
 }

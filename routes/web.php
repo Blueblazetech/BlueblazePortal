@@ -52,12 +52,17 @@ Route::middleware('auth')->prefix('JobManagement')->group(function(){
     Route::get('/preview/posted/{id}', [App\Http\Controllers\HomeController::class, 'prevPosted'])->name('a-preview-posted-job');
 
     Route::post('/user/apply-now', [App\Http\Controllers\HomeController::class, 'applyNow'])->name('apply-now');
+    Route::post('/user/personal/detail', [App\Http\Controllers\HomeController::class, 'personalDetail'])->name('user-personal-detail');
+    Route::post('/user/experience', [App\Http\Controllers\HomeController::class, 'userExperience'])->name('user-experience');
+
+
 
 
 
     // settings
 
     Route::post('/general/settings', [App\Http\Controllers\HomeController::class, 'generalSettings'])->name('s-general-settings');
+
 
 
 
