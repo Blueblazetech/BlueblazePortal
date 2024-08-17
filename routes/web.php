@@ -54,6 +54,12 @@ Route::middleware('auth')->prefix('JobManagement')->group(function(){
     Route::post('/user/apply-now', [App\Http\Controllers\HomeController::class, 'applyNow'])->name('apply-now');
     Route::post('/user/personal/detail', [App\Http\Controllers\HomeController::class, 'personalDetail'])->name('user-personal-detail');
     Route::post('/user/experience', [App\Http\Controllers\HomeController::class, 'userExperience'])->name('user-experience');
+    Route::post('/user/education', [App\Http\Controllers\HomeController::class, 'userEducation'])->name('user-education');
+    Route::post('/user/add/skill', [App\Http\Controllers\HomeController::class, 'userSkill'])->name('user-add-skills');
+    Route::post('/user/add/certificate', [App\Http\Controllers\HomeController::class, 'userCertificate'])->name('user-add-certificate');
+   
+  
+    
 
 
 

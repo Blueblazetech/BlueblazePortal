@@ -193,6 +193,12 @@ class HomeController extends Controller
 
     }
 
+    public function userfiles(){
+
+        $path = Storage::disk('public')->put('userAttachments',$file);
+        return $path;
+    }
+
     public function newPost(Request $request)
     {
 
@@ -429,5 +435,77 @@ class HomeController extends Controller
 
 
         }
+    }
+
+    public function userEducation(Request $request){
+      
+        try{
+
+            DB::beginTransaction();
+            $aca = new Educaion;
+            $aca->applicant_id = Auth::user()->portalUser->id;
+            $aca->institution = $request->school;
+            $aca->start_date = $request->fromDate;
+            $aca->end_date = $request->toDate;
+            $aca->level = $request->level;
+            if(request->hasFile('SchoolFile')){
+
+                $attach = $request->file('schoolFile');
+                $path = $this->userFiles($attach);
+                
+                $file = new userAttachment;
+                $file->user_id = Auth::user()->portalUser->id;
+                $file->name = $request->getClientOriginalname();
+                $file->path = $path;
+                $file->status = 'Available';
+                $file->save();
+               
+            }
+
+            DB::commit();
+                
+            return back()->with('success', 'Records added sucessfully');
+
+        }catch(\Exception $e)
+
+        {
+            DB::rollback();
+
+            return back()->with('error', 'Failed to Save the records'.$e);
+        }
+
+
+    }
+
+    public function userSkill(Request $request){
+
+
+        try{
+
+            DB::beginTransaction();
+            $skills  = explode(',', $request->skills);
+            foreach($skills as $skill)
+            {
+                $sk = new userSkill;
+                $sk->user_id = Auth::user()->portalUser->id;
+                $sk->skill = $skill;
+                $sk->save();
+            }
+
+            DB::commit();
+
+            return back()->with('success', 'Skills successfully added to your profile');
+
+        }catch(\Exception $e)
+
+        {
+            DB::rollback();
+            return back()->with('error', 'Failed to add skills to your profile'.$e);
+        }
+    }
+    public function  userCertificate(){
+
+        
+
     }
 }
