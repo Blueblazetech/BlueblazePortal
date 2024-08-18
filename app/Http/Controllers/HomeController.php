@@ -503,9 +503,29 @@ class HomeController extends Controller
             return back()->with('error', 'Failed to add skills to your profile'.$e);
         }
     }
-    public function  userCertificate(){
 
-        
+    public function  userSocial(Request $request){
+
+        try{
+
+            DB::beginTransaction();
+            $soc = new UserSocialAccount;
+            $soc->user_id = Auth::user()->portalUser->id;
+            $soc->facebook = $request->facebook;
+            $soc->linked_in = $request->linkedIn;
+            $soc->twitter = $request->twitter;
+            $soc->instagram = $request->instagram;
+            $soc->save();
+
+            DB::commit();
+            return back()->with('success', 'Social accounts successfully updated');
+
+        }catch(\Exception $e)
+        {
+
+            DB::rollback();
+            return back()->with('error', 'Failed to update social media accounts');
+        }
 
     }
 }

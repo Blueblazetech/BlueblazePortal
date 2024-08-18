@@ -682,7 +682,7 @@
                                     <div class="col-md-12">
                                         <div class="row">
                                             <div class="col-md-8">
-                                                <form action="" method="" enctype="multipart/form-data">
+                                                <form action="{{ route('user-add-socials') }}" method="POST" enctype="multipart/form-data">
                                                     @csrf
                                                     <div class="row">
                                                         <label class="col-md-2 col-form-label">Facebook</label>
@@ -691,7 +691,7 @@
                                                                 <span class="input-group-addon"><i
                                                                         class="feather icon-facebook"></i></span>
                                                                 <input type="text" class="form-control"
-                                                                    placeholder="https//facebook.com">
+                                                                    placeholder="https//facebook.com" name = "facebook" id = "fb">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -702,7 +702,7 @@
                                                                 <span class="input-group-addon"><i
                                                                         class="feather icon-link"></i></span>
                                                                 <input type="text" class="form-control"
-                                                                    placeholder="https//linkedin.com">
+                                                                    placeholder="https//linkedin.com" name = "linkedIn" id = "linkedIn">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -713,7 +713,7 @@
                                                                 <span class="input-group-addon"><i
                                                                         class="feather icon-instagram"></i></span>
                                                                 <input type="text" class="form-control"
-                                                                    placeholder="https//instagram.com">
+                                                                    placeholder="https//instagram.com" name = "instagram" id = "instagram">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -724,7 +724,7 @@
                                                                 <span class="input-group-addon"><i
                                                                         class="feather icon-twitter"></i></span>
                                                                 <input type="text" class="form-control"
-                                                                    placeholder="https//twitter.com">
+                                                                    placeholder="https//twitter.com" name = "twitter" id = "twitter">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -739,8 +739,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-
                             </div>
                         </div>
                     </div>

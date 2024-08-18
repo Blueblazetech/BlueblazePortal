@@ -57,6 +57,8 @@ Route::middleware('auth')->prefix('JobManagement')->group(function(){
     Route::post('/user/education', [App\Http\Controllers\HomeController::class, 'userEducation'])->name('user-education');
     Route::post('/user/add/skill', [App\Http\Controllers\HomeController::class, 'userSkill'])->name('user-add-skills');
     Route::post('/user/add/certificate', [App\Http\Controllers\HomeController::class, 'userCertificate'])->name('user-add-certificate');
+    Route::post('/user/add/socials', [App\Http\Controllers\HomeController::class, 'userSocial'])->name('user-add-socials');
+   
    
   
     
