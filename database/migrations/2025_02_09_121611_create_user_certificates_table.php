@@ -11,13 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_social_accounts', function (Blueprint $table) {
+        Schema::create('user_certificates', function (Blueprint $table) {
             $table->id();
             $table->string('user_id');
-            $table->string('facebook');
-            $table->string('linked_in');
-            $table->string('instagram');
-            $table->string('twitter');
+            $table->string('name');
+            $table->string('institution');
+            $table->string(column: 'program');
+            $table->date(column: 'from_date');
+            $table->date('to_date');
+            $table->string('path');
+            $table->string('status');
             $table->timestamps();
         });
     }
@@ -27,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_social_accounts');
+        Schema::dropIfExists('user_certificates');
     }
 };

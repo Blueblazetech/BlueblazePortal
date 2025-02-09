@@ -10,7 +10,9 @@ use App\Models\User;
 use App\Models\Salary;
 use App\Models\JobSkill;
 use App\Models\JobTitle;
+use App\Models\Education;
 use App\Models\Locations;
+use App\Models\UserSkill;
 use App\Models\Experience;
 use App\Models\PortalUser;
 use App\Models\JobCategory;
@@ -23,6 +25,8 @@ use App\Models\JobCertificate;
 use App\Models\JobPostHistory;
 use App\Models\UserAttachment;
 use App\Models\UserExperience;
+use App\Models\userCertificates;
+use App\Models\UserSocialAccount;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\AcademicQualification;
@@ -60,7 +64,6 @@ class HomeController extends Controller
     {
 
         return view('admin.admin-home');
-
     }
 
     public function postedJobs()
@@ -89,7 +92,6 @@ class HomeController extends Controller
     {
 
         return view('jobs.expired-jobs');
-
     }
 
     public function approvedJobs()
@@ -190,12 +192,12 @@ class HomeController extends Controller
 
         $path = Storage::disk('public')->put('jobAttachments', $file);
         return $path;
-
     }
 
-    public function userfiles(){
+    public function userfiles($file)
+    {
 
-        $path = Storage::disk('public')->put('userAttachments',$file);
+        $path = Storage::disk('public')->put('userAttachments', $file);
         return $path;
     }
 
@@ -274,7 +276,6 @@ class HomeController extends Controller
                 $jobfile->path = $path;
                 $jobfile->name = $request->file_description;
                 $jobfile->save();
-
             }
 
             $history = new JobPostHistory;
@@ -286,16 +287,11 @@ class HomeController extends Controller
 
             DB::commit();
             return back()->with('success', 'your job has been posted successfully.');
-
         } catch (Exception $e) {
 
             DB::rollback();
             return back()->with('error', 'Failed to post your job vacancy' . $e);
         }
-
-
-
-
     }
 
     public function clientJobPreview($id)
@@ -337,14 +333,10 @@ class HomeController extends Controller
             $app->rank = $app->calculateScore();
             $app->save();
             DB::commit();
-
         } catch (Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Job Application Failed' . $e);
         }
-
-
-
     }
 
     public function personalDetail(Request $request)
@@ -404,11 +396,7 @@ class HomeController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             return back()->with('error', 'failed to update personal details' . $e);
-
         }
-
-
-
     }
 
     public function userExperience(Request $request)
@@ -432,61 +420,55 @@ class HomeController extends Controller
         } catch (Exception $e) {
 
             return back()->with('error', 'Failed to add experience records' . $e);
-
-
         }
     }
 
-    public function userEducation(Request $request){
-      
-        try{
+    public function userEducation(Request $request)
+    {
+
+        try {
 
             DB::beginTransaction();
-            $aca = new Educaion;
+            $aca = new Education;
             $aca->applicant_id = Auth::user()->portalUser->id;
             $aca->institution = $request->school;
             $aca->start_date = $request->fromDate;
             $aca->end_date = $request->toDate;
             $aca->level = $request->level;
-            if(request->hasFile('SchoolFile')){
+            if ($request->hasFile('SchoolFile')) {
 
                 $attach = $request->file('schoolFile');
                 $path = $this->userFiles($attach);
-                
+
                 $file = new userAttachment;
                 $file->user_id = Auth::user()->portalUser->id;
-                $file->name = $request->getClientOriginalname();
+                $file->name = $request->getClientOriginalName();
                 $file->path = $path;
-                $file->status = 'Available';
+                $file->status = 'active';
                 $file->save();
-               
             }
 
             DB::commit();
-                
+
             return back()->with('success', 'Records added sucessfully');
-
-        }catch(\Exception $e)
-
-        {
+        } catch (\Exception $e) {
             DB::rollback();
 
-            return back()->with('error', 'Failed to Save the records'.$e);
+            return back()->with('error', 'Failed to Save the records' . $e);
         }
-
-
     }
 
-    public function userSkill(Request $request){
+
+    public function userSkill(Request $request)
+    {
 
 
-        try{
+        try {
 
             DB::beginTransaction();
             $skills  = explode(',', $request->skills);
-            foreach($skills as $skill)
-            {
-                $sk = new userSkill;
+            foreach ($skills as $skill) {
+                $sk = new UserSkill;
                 $sk->user_id = Auth::user()->portalUser->id;
                 $sk->skill = $skill;
                 $sk->save();
@@ -495,18 +477,58 @@ class HomeController extends Controller
             DB::commit();
 
             return back()->with('success', 'Skills successfully added to your profile');
-
-        }catch(\Exception $e)
-
-        {
+        } catch (\Exception $e) {
             DB::rollback();
-            return back()->with('error', 'Failed to add skills to your profile'.$e);
+            return back()->with('error', 'Failed to add skills to your profile' . $e);
         }
     }
 
-    public function  userSocial(Request $request){
+    public function userCertificate(Request $request)
+    {
+
+        // dd($request);
+        try {
+
+            DB::beginTransaction();
+            $cert = new userCertificates;
+            $cert->user_id = Auth::user()->portalUser->id;
+            $cert->institution = $request->institution;
+            $cert->program = $request->program;
+            $cert->from_date = $request->fromDate;
+            $cert->to_date = $request->toDate;
+            if ($request->hasFile(key: 'certi_file')) {
+
+                $attach = $request->file('certi_file');
+                $path = $this->userFiles($attach);
+                $cert->name = $attach->getClientOriginalname();
+                $cert->path = $path;
+                $cert->status = 'active';
+                $cert->save();
+            }
+            DB::commit();
+            return back()->with('success', 'certificates saved succefully');
+        } catch (Exception $e) {
+            DB::rollback();
+            return back()->with('error', 'failed to save certificate' . $e);
+        }
+    }
+
+    public function updateUserAccount(){
 
         try{
+
+
+        }catch(Exception $e){
+
+            DB::rollback();
+            return back()->with('error', 'failed to update account details'.$e);
+        }
+    }
+
+    public function  userSocial(Request $request)
+    {
+
+        try {
 
             DB::beginTransaction();
             $soc = new UserSocialAccount;
@@ -519,13 +541,10 @@ class HomeController extends Controller
 
             DB::commit();
             return back()->with('success', 'Social accounts successfully updated');
-
-        }catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
 
             DB::rollback();
             return back()->with('error', 'Failed to update social media accounts');
         }
-
     }
 }

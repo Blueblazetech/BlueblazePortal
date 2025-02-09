@@ -273,7 +273,7 @@
                                                                         <div class="col-md-6">
                                                                             <div class="form-group">
                                                                                 <label for="natinality">
-                                                                                    Date Of Birth
+                                                                                    Nationality
                                                                                 </label>
                                                                                 <input type="text" class="form-control"
                                                                                     id="nationality" value=""
@@ -514,175 +514,181 @@
                                 </div>
                                 <div class="tab-pane" id="account">
                                     <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="card">
-                                                <div class="card-header">
+                                        <form action="{{ route('user-update-account') }}" method="POST">
+                                            <div class="col-md-12">
+                                                <div class="card">
+                                                    <div class="card-header">
 
-                                                    <div class="card-title">
+                                                        <div class="card-title">
+
+                                                        </div>
 
                                                     </div>
-
-                                                </div>
-                                                <div class="card-body">
-                                                    <div class="row" class="customAccount">
-                                                        <div class="col-md-4">
-                                                            <label for="country">
-                                                                Country
-                                                            </label>
-                                                            <select class="form-control" name="countries" id="countries">
-                                                                <option value="zimbabwe">Zimbabwe</option>
-                                                                <option value="south_africa">South Africa</option>
-                                                                <option value="mozambique">Mozambique</option>
-                                                                <option value="malawi">Malawi</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <label for="cty">
-                                                                City
-                                                            </label>
-                                                            <select class="form-control" name="city" id="city">
-                                                                <option value="harare">Harare</option>
-                                                                <option value="mutare">Mutare</option>
-                                                                <option value="masvingo">Masvingo</option>
-                                                                <option value="gweru">Gweru East</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <label for="cty">
-                                                                Province
-                                                            </label>
-                                                            <select class="form-control" name="city" id="city">
-                                                                <option value="harare">Harare</option>
-                                                                <option value="manicaland">Manicaland</option>
-                                                                <option value="mash_west">Mashonaland West</option>
-                                                                <option value="mash_east">Mashonaland East</option>
-                                                            </select>
+                                                    <div class="card-body">
+                                                        <div class="row" class="customAccount">
+                                                            <div class="col-md-4">
+                                                                <label for="country">
+                                                                    Country
+                                                                </label>
+                                                                <select class="form-control" name="countries"
+                                                                    id="countries">
+                                                                    <option value="zimbabwe">Zimbabwe</option>
+                                                                    <option value="south_africa">South Africa</option>
+                                                                    <option value="mozambique">Mozambique</option>
+                                                                    <option value="malawi">Malawi</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label for="cty">
+                                                                    City
+                                                                </label>
+                                                                <select class="form-control" name="city"
+                                                                    id="city">
+                                                                    <option value="harare">Harare</option>
+                                                                    <option value="mutare">Mutare</option>
+                                                                    <option value="masvingo">Masvingo</option>
+                                                                    <option value="gweru">Gweru East</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <label for="cty">
+                                                                    Province
+                                                                </label>
+                                                                <select class="form-control" name="city"
+                                                                    id="city">
+                                                                    <option value="harare">Harare</option>
+                                                                    <option value="manicaland">Manicaland</option>
+                                                                    <option value="mash_west">Mashonaland West</option>
+                                                                    <option value="mash_east">Mashonaland East</option>
+                                                                </select>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <div class="card">
-                                                <div class="card-header">
-                                                    <div class="card-title">
+                                            <div class="col-md-12">
+                                                <div class="card">
+                                                    <div class="card-header">
+                                                        <div class="card-title">
 
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="card-body">
-                                                    <label for="pref">Choose Prefered Job Titles</label>
-                                                    <textarea type="text" name="prefered" id="prefered" class="form-control"
-                                                        placeholder="please choose your job options here">
-                                                    </textarea>
+                                                    <div class="card-body">
+                                                        <label for="pref">Choose Prefered Job Titles</label>
+                                                        <textarea type="text" name="prefered" id="prefered" class="form-control"
+                                                            placeholder="please choose your job options here">
+                                                        </textarea>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <div class="card">
-                                                <div class="card-header">
-                                                    <div class="card-title">
-                                                        Profile Status
-                                                    </div>
+                                            <div class="col-md-12">
+                                                <div class="card">
+                                                    <div class="card-header">
+                                                        <div class="card-title">
+                                                            Profile Status
+                                                        </div>
 
-                                                </div>
-                                                <div class="card-body">
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <h4>Employment Vacancies</h5>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <h4>Employment Vacancies</h5>
+                                                                    <div class="form-group">
+                                                                        <label for="avble">Available</label>
+                                                                        <input type="radio" id="available"
+                                                                            name="available">
+                                                                        <label for="unble">Unavailable</label>
+                                                                        <input type="radio" id="unavailable"
+                                                                            name="unavailable">
+                                                                    </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <h5>Account Privacy</h5>
                                                                 <div class="form-group">
-                                                                    <label for="avble">Available</label>
-                                                                    <input type="radio" id="available"
-                                                                        name="available">
-                                                                    <label for="unble">Unavailable</label>
-                                                                    <input type="radio" id="unavailable"
-                                                                        name="unavailable">
+                                                                    <label for="avble">Visible</label>
+                                                                    <input type="radio" id="visible" name="visible">
+                                                                    <label for="unble">Private</label>
+                                                                    <input type="radio" id="private" name="private">
                                                                 </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <h5>Account Privacy</h5>
-                                                            <div class="form-group">
-                                                                <label for="avble">Visible</label>
-                                                                <input type="radio" id="visible" name="visible">
-                                                                <label for="unble">Private</label>
-                                                                <input type="radio" id="private" name="private">
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <div class="row">
-                                                <div class="col-md-12">
-                                                    <div class="card">
-                                                        <div class="card-header">
-                                                            <div class="card-title">
+                                            {{-- <div class="col-md-12">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="card">
+                                                            <div class="card-header">
+                                                                <div class="card-title">
 
+                                                                </div>
+                                                            </div>
+                                                            <div class="card-body">
+                                                                <div class="col-md-6">
+                                                                    <label for="passd">New Password</label>
+                                                                    <input type="password" id="passrd" name="passwrd"
+                                                                        class="form-control bg-info">
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label for="passd">Confirm Password</label>
+                                                                    <input type="password" id="confirm" name="confirm"
+                                                                        class="form-control">
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div class="card-body">
-                                                            <div class="col-md-6">
-                                                                <label for="passd">New Password</label>
-                                                                <input type="password" id="passrd" name="passwrd"
-                                                                    class="form-control bg-info">
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <label for="passd">Confirm Password</label>
-                                                                <input type="password" id="confirm" name="confirm"
-                                                                    class="form-control">
-                                                            </div>
+
+                                                    </div>
+                                                </div>
+                                            </div> --}}
+                                            <div class="col-md-12">
+                                                <div class="card">
+                                                    <div class="card-header">
+                                                        <div class="card-title">
+                                                            <h5 style="color: red"> Delete /</h5>
+                                                            <h5 style="color: green">Deactivate Account</h5>
                                                         </div>
-                                                    </div>
 
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12">
-                                            <div class="card">
-                                                <div class="card-header">
-                                                    <div class="card-title">
-                                                        <h5 style="color: red"> Delete /</h5>
-                                                        <h5 style="color: green">Deactivate Account</h5>
                                                     </div>
-
-                                                </div>
-                                                <div class="card-body">
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <div class="row">
-                                                                <div class="col-md-12">
-                                                                    <div class="row">
-                                                                        <div class="col-md-12">
-                                                                            <button type="button"
-                                                                                class="btn btn-outline-danger btn-md btn-round">Deactivate</button>
-                                                                            <button type="button"
-                                                                                class="btn btn-outline-danger btn-md float-right btn-round">Delete
-                                                                                Account</button>
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="row">
+                                                                    <div class="col-md-12">
+                                                                        <div class="row">
+                                                                            <div class="col-md-12">
+                                                                                <button type="button"
+                                                                                    class="btn btn-outline-danger btn-md btn-round">Deactivate</button>
+                                                                                <button type="button"
+                                                                                    class="btn btn-outline-danger btn-md float-right btn-round">Delete
+                                                                                    Account</button>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
-                                                                </div>
-                                                                <div class="col-md-12">
-                                                                    <label for="rsn">
-                                                                        Reason
-                                                                    </label>
-                                                                    <textarea class="form-control" name="reason" id="reason"
-                                                                        placeholder="reason for account deletion or deactivation">
-                                                                </textarea>
-                                                                </div>
+                                                                    <div class="col-md-12">
+                                                                        <label for="rsn">
+                                                                            Reason
+                                                                        </label>
+                                                                        <textarea class="form-control" name="reason" id="reason"
+                                                                            placeholder="reason for account deletion or deactivation">
+                                                                    </textarea>
+                                                                    </div>
 
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </form>
                                     </div>
                                 </div>
                                 <div class="tab-pane" id="social">
                                     <div class="col-md-12">
                                         <div class="row">
                                             <div class="col-md-8">
-                                                <form action="{{ route('user-add-socials') }}" method="POST" enctype="multipart/form-data">
+                                                <form action="{{ route('user-add-socials') }}" method="POST"
+                                                    enctype="multipart/form-data">
                                                     @csrf
                                                     <div class="row">
                                                         <label class="col-md-2 col-form-label">Facebook</label>
@@ -691,7 +697,8 @@
                                                                 <span class="input-group-addon"><i
                                                                         class="feather icon-facebook"></i></span>
                                                                 <input type="text" class="form-control"
-                                                                    placeholder="https//facebook.com" name = "facebook" id = "fb">
+                                                                    placeholder="https//facebook.com" name = "facebook"
+                                                                    id = "fb">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -702,7 +709,8 @@
                                                                 <span class="input-group-addon"><i
                                                                         class="feather icon-link"></i></span>
                                                                 <input type="text" class="form-control"
-                                                                    placeholder="https//linkedin.com" name = "linkedIn" id = "linkedIn">
+                                                                    placeholder="https//linkedin.com" name = "linkedIn"
+                                                                    id = "linkedIn">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -713,7 +721,8 @@
                                                                 <span class="input-group-addon"><i
                                                                         class="feather icon-instagram"></i></span>
                                                                 <input type="text" class="form-control"
-                                                                    placeholder="https//instagram.com" name = "instagram" id = "instagram">
+                                                                    placeholder="https//instagram.com" name = "instagram"
+                                                                    id = "instagram">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -724,7 +733,8 @@
                                                                 <span class="input-group-addon"><i
                                                                         class="feather icon-twitter"></i></span>
                                                                 <input type="text" class="form-control"
-                                                                    placeholder="https//twitter.com" name = "twitter" id = "twitter">
+                                                                    placeholder="https//twitter.com" name = "twitter"
+                                                                    id = "twitter">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -933,13 +943,14 @@
                                 </div>
                             </div>
                         </div>
-                         <div class="modal-footer">
-                    <button type="button" class="btn btn-grd-danger btn-round" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-grd-primary btn-round">Submit</button>
-                </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-grd-danger btn-round"
+                                data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-grd-primary btn-round">Submit</button>
+                        </div>
                     </form>
                 </div>
-               
+
             </div>
         </div>
     </div>
@@ -1010,13 +1021,16 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-grd-primary btn-round">Submit</button>
+                                <button type="button" class="btn btn-grd-danger btn-round f-right"
+                                    data-dismiss="modal">Close</button>
+                            </div>
 
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-grd-danger btn-round" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-grd-primary btn-round">Submit</button>
                 </div>
             </div>
         </div>
