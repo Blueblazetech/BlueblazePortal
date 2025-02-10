@@ -514,7 +514,7 @@
                                 </div>
                                 <div class="tab-pane" id="account">
                                     <div class="row">
-                                        <form action="{{ route('user-update-account') }}" method="POST">
+                                        {{-- <form action="{{ route('user-update-account') }}" method="POST"> --}}
                                             <div class="col-md-12">
                                                 <div class="card">
                                                     <div class="card-header">
@@ -680,7 +680,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </form>
+                                        {{-- </form> --}}
                                     </div>
                                 </div>
                                 <div class="tab-pane" id="social">
