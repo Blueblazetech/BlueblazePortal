@@ -17,13 +17,14 @@ Route::get('/', function () {
 
     return view('auth.login');
 
+
 });
 
 
 
 Auth::routes();
 
-Route::middleware('auth')->prefix('JobManagement')->group(function(){
+Route::middleware('auth','admin')->prefix('JobManagement')->group(function(){
 
     // Admin routes
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('ad-dashboard');
@@ -78,6 +79,11 @@ Route::middleware('auth')->prefix('JobManagement')->group(function(){
 
 
 
+});
+
+Route::get('error', function(){
+
+    return view('error.index');
 });
 
 Route::middleware('auth', 'user')->prefix('userJobs')->group(function(){
