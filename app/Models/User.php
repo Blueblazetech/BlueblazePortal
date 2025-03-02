@@ -82,4 +82,39 @@ class User extends Authenticatable
 
         return $this->hasOne(PortalUser::class, 'user_id');
     }
+
+    public function jobApplicants(){
+
+        return $this->hasMany(JobApplicant::class, 'user_id');
+    }
+
+    public function certifications(){
+
+        return $this->hasMany(UserCertificates::class, 'user_id');
+    }
+
+    public function skills(){
+
+        return $this->hasMany(UserSkill::class, 'user_id');
+    }
+
+    public function education(){
+
+        return $this->hasMany(Education::class, 'user_id');
+    }
+
+    public function experience(){
+
+        return $this->hasMany(UserExperience::class, 'user_id');
+    }
+
+    public function resume(){
+
+        return $this->hasOne(UserAttachment::class, 'user_id')->where('name','user_cv');
+    }
+
+    public function video(){
+
+        return $this->hasOne(UserAttachment::class, 'user_id')->where('name','user_video');
+    }
 }

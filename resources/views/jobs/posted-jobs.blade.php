@@ -83,7 +83,6 @@
         </div>
     </div>
     <div class="col-md-12">
-
         <div class="card z-depth-1">
             <div class="card-header bg-primary">
                 <div class="card-title">
@@ -91,11 +90,13 @@
                 </div>
             </div>
             <div class="card-body">
-                <livewire:jobs.posted-job />
+                <div class="table-responsive"> <!-- ✅ Moved table wrapper directly inside card-body -->
+                    <livewire:jobs.posted-job />
+                </div>
             </div>
-
         </div>
     </div>
+
 
 @endsection
 

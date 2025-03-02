@@ -489,200 +489,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="tab-pane" id="certificates">
-
-                                    <div class="col-md-12">
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <div class="card-title">
-
-                                                </div>
-                                                <div class="card-body">
-
-                                                    <button type="button"
-                                                        class="btn btn-grd-primary float-right btn-round"
-                                                        data-toggle="modal" data-target="#addCerti">
-                                                        <i class="feather icon-briefcase"></i> Add Certificates
-                                                    </button>
-
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="tab-pane" id="account">
-                                    <div class="row">
-                                        {{-- <form action="{{ route('user-update-account') }}" method="POST"> --}}
-                                            <div class="col-md-12">
-                                                <div class="card">
-                                                    <div class="card-header">
-
-                                                        <div class="card-title">
-
-                                                        </div>
-
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <div class="row" class="customAccount">
-                                                            <div class="col-md-4">
-                                                                <label for="country">
-                                                                    Country
-                                                                </label>
-                                                                <select class="form-control" name="countries"
-                                                                    id="countries">
-                                                                    <option value="zimbabwe">Zimbabwe</option>
-                                                                    <option value="south_africa">South Africa</option>
-                                                                    <option value="mozambique">Mozambique</option>
-                                                                    <option value="malawi">Malawi</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label for="cty">
-                                                                    City
-                                                                </label>
-                                                                <select class="form-control" name="city"
-                                                                    id="city">
-                                                                    <option value="harare">Harare</option>
-                                                                    <option value="mutare">Mutare</option>
-                                                                    <option value="masvingo">Masvingo</option>
-                                                                    <option value="gweru">Gweru East</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="col-md-4">
-                                                                <label for="cty">
-                                                                    Province
-                                                                </label>
-                                                                <select class="form-control" name="city"
-                                                                    id="city">
-                                                                    <option value="harare">Harare</option>
-                                                                    <option value="manicaland">Manicaland</option>
-                                                                    <option value="mash_west">Mashonaland West</option>
-                                                                    <option value="mash_east">Mashonaland East</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <div class="card">
-                                                    <div class="card-header">
-                                                        <div class="card-title">
-
-                                                        </div>
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <label for="pref">Choose Prefered Job Titles</label>
-                                                        <textarea type="text" name="prefered" id="prefered" class="form-control"
-                                                            placeholder="please choose your job options here">
-                                                        </textarea>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <div class="card">
-                                                    <div class="card-header">
-                                                        <div class="card-title">
-                                                            Profile Status
-                                                        </div>
-
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <div class="row">
-                                                            <div class="col-md-6">
-                                                                <h4>Employment Vacancies</h5>
-                                                                    <div class="form-group">
-                                                                        <label for="avble">Available</label>
-                                                                        <input type="radio" id="available"
-                                                                            name="available">
-                                                                        <label for="unble">Unavailable</label>
-                                                                        <input type="radio" id="unavailable"
-                                                                            name="unavailable">
-                                                                    </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <h5>Account Privacy</h5>
-                                                                <div class="form-group">
-                                                                    <label for="avble">Visible</label>
-                                                                    <input type="radio" id="visible" name="visible">
-                                                                    <label for="unble">Private</label>
-                                                                    <input type="radio" id="private" name="private">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            {{-- <div class="col-md-12">
-                                                <div class="row">
-                                                    <div class="col-md-12">
-                                                        <div class="card">
-                                                            <div class="card-header">
-                                                                <div class="card-title">
-
-                                                                </div>
-                                                            </div>
-                                                            <div class="card-body">
-                                                                <div class="col-md-6">
-                                                                    <label for="passd">New Password</label>
-                                                                    <input type="password" id="passrd" name="passwrd"
-                                                                        class="form-control bg-info">
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <label for="passd">Confirm Password</label>
-                                                                    <input type="password" id="confirm" name="confirm"
-                                                                        class="form-control">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                            </div> --}}
-                                            <div class="col-md-12">
-                                                <div class="card">
-                                                    <div class="card-header">
-                                                        <div class="card-title">
-                                                            <h5 style="color: red"> Delete /</h5>
-                                                            <h5 style="color: green">Deactivate Account</h5>
-                                                        </div>
-
-                                                    </div>
-                                                    <div class="card-body">
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <div class="row">
-                                                                    <div class="col-md-12">
-                                                                        <div class="row">
-                                                                            <div class="col-md-12">
-                                                                                <button type="button"
-                                                                                    class="btn btn-outline-danger btn-md btn-round">Deactivate</button>
-                                                                                <button type="button"
-                                                                                    class="btn btn-outline-danger btn-md float-right btn-round">Delete
-                                                                                    Account</button>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-md-12">
-                                                                        <label for="rsn">
-                                                                            Reason
-                                                                        </label>
-                                                                        <textarea class="form-control" name="reason" id="reason"
-                                                                            placeholder="reason for account deletion or deactivation">
-                                                                    </textarea>
-                                                                    </div>
-
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        {{-- </form> --}}
-                                    </div>
-                                </div>
                                 <div class="tab-pane" id="social">
                                     <div class="col-md-12">
                                         <div class="row">
@@ -749,12 +555,146 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="tab-pane" id="certificates">
+
+                                    <div class="col-md-12">
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <div class="card-title">
+
+                                                </div>
+                                                <div class="card-body">
+
+                                                    <button type="button"
+                                                        class="btn btn-grd-primary float-right btn-round"
+                                                        data-toggle="modal" data-target="#addCerti">
+                                                        <i class="feather icon-briefcase"></i> Add Certificates
+                                                    </button>
+
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="tab-pane" id="account">
+                                    <form action="{{ route('user-update-account') }}" method="POST"
+                                        enctype="multipart/form-data">
+                                        @csrf
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div class="card-header">
+
+                                                    <div class="card-title">
+
+                                                    </div>
+
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="row" class="customAccount">
+                                                        <div class="col-md-4">
+                                                            <label for="country">
+                                                                Country
+                                                            </label>
+                                                            <select class="form-control" name="country" id="countries">
+                                                                <option value="zimbabwe">Zimbabwe</option>
+                                                                <option value="south_africa">South Africa</option>
+                                                                <option value="mozambique">Mozambique</option>
+                                                                <option value="malawi">Malawi</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label for="cty">
+                                                                City
+                                                            </label>
+                                                            <select class="form-control" name="city" id="city">
+                                                                <option value="harare">Harare</option>
+                                                                <option value="mutare">Mutare</option>
+                                                                <option value="masvingo">Masvingo</option>
+                                                                <option value="gweru">Gweru East</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label for="cty">
+                                                                Province
+                                                            </label>
+                                                            <select class="form-control" name="province" id="city">
+                                                                <option value="harare">Harare</option>
+                                                                <option value="manicaland">Manicaland</option>
+                                                                <option value="mash_west">Mashonaland West</option>
+                                                                <option value="mash_east">Mashonaland East</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <div class="card-title">
+
+                                                    </div>
+                                                </div>
+                                                <div class="card-body">
+                                                    <label for="pref">Choose Prefered Job Titles</label>
+                                                    <textarea type="text" name="prefered" id="prefered" class="form-control"
+                                                        placeholder="please choose your job options here">
+                                                        </textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <div class="card-title">
+                                                        Profile Status
+                                                    </div>
+
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <h6>Employment Vacancies</h6>
+                                                            <div class="form-group">
+                                                                <label for="avble">Available</label>
+                                                                <input type="radio" id="available" name="availability">
+                                                                <label for="unble">Unavailable</label>
+                                                                <input type="radio" id="unavailable"
+                                                                    name="availability">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <h6>Account Privacy</h6>
+                                                            <div class="form-group">
+                                                                <label for="avble">Visible</label>
+                                                                <input type="radio" id="visible" name="visibility">
+                                                                <label for="unble">Private</label>
+                                                                <input type="radio" id="private" name="visibility">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            {{-- <div class="modal-footer"> --}}
+                                            <button type="submit" class="btn btn-primary btn-round f-right m-3">Update
+                                                Details</button>
+                                            {{-- </div> --}}
+                                        </div>
+                                </div>
+                                </form>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
         </div>
+    </div>
+    </div>
     </div>
     <div id="empDetails" class="modal fade" role="dialog">
         <div class="modal-dialog">
@@ -791,6 +731,31 @@
                                     <div class="col-md-6">
                                         <label for="toDate">To</label>
                                         <input type="date" id="toDate" name="toDate" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="totalExp">Total Working Experience</label>
+                                        <select id="totalExp" class = "form-control">
+                                            <option value="0">fresher</option>
+                                            <option value="1">1 year</option>
+                                            <option value="2">2 years</option>
+                                            <option value="3">3 years</option>
+                                            <option value="4">4 years</option>
+                                            <option value="5">5 years</option>
+                                            <option value="6">6 years</option>
+                                            <option value="7">7 years</option>
+                                            <option value="8">8 years</option>
+                                            <option value="9">9 years</option>
+                                            <option value="10">10 years</option>
+                                            <option value="11">11 years</option>
+                                            <option value="12">12 years</option>
+                                            <option value="13">13 years</option>
+                                            <option value="14">15 years</option>
+                                            <option value="15+">15+ years</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>

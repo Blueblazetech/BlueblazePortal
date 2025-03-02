@@ -111,7 +111,10 @@
                             </div>
                         </div>
                         <div class="card-body">
-
+                            <h1>Recent Applications</h1>
+                            <div class="row table-responsive">
+                                <livewire:applications.all-application />
+                            </div>
                         </div>
                     </div>
                 </div>

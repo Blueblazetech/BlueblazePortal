@@ -27,6 +27,7 @@ use App\Models\UserAttachment;
 use App\Models\UserExperience;
 use App\Models\userCertificates;
 use App\Models\UserSocialAccount;
+use App\Models\UserAccountSetting;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\AcademicQualification;
@@ -310,34 +311,56 @@ class HomeController extends Controller
         return view('client.profileSettings', ['user' => $user]);
     }
 
-    public function applyNow(Request $request)
-    {
+public function applyNow(Request $request)
+{
+    $user = PortalUser::where('user_id', $request->userId)->first();
 
-        $user = PortalUser::where('user_id', $request->userId);
-        // dd($request);
-        try {
-            Db::beginTransaction();
-
-            $app = new JobApplicant;
-            $app->portal_user_id = $user->id;
-            $app->user_id = Auth::user()->id;
-            $app->job_id = $request->jobId;
-            $app->name = $user->name;
-            $app->surname = $user->surname;
-            $app->contact = $user->contact;
-            $app->address = $user->address;
-            $app->email = $user->email;
-            $app->resume = $user->resume;
-            $app->video = $user->video;
-            $app->date_applied = Carbon::now();
-            $app->rank = $app->calculateScore();
-            $app->save();
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Job Application Failed' . $e);
-        }
+    if (!$user) {
+        return back()->with('error', 'User profile not found, kindly update your user profile settings.');
     }
+
+    try {
+        // Check for duplicate application
+        $dup = JobApplicant::where(function ($query) use ($request) {
+            $query->where('user_id', Auth::user()->id)
+                  ->where('job_id', $request->jobId);
+        })->exists();
+
+        if ($dup) {
+            return back()->with('error', 'You have already applied for this job.');
+        }
+
+        DB::beginTransaction();
+
+        // Create job application
+        $app = new JobApplicant();
+        $app->user_id = Auth::user()->id;
+        $app->job_id = $request->jobId;
+        $app->name = $user->name;
+        $app->surname = $user->surname;
+        $app->gender = $user->gender;
+        $app->marital_status = $user->marital_status;
+        $app->contact_1 = $user->contact_1;
+        $app->contact_2 = $user->contact_2;
+        $app->physical_address = $user->physical_address;
+        $app->email_address = $user->email_address;
+        $app->nationality = $user->nationality;
+        $app->resume = $user->resume ? $user->resume->path : null;
+        $app->video = $user->video ? $user->video->path : null;
+        $app->portal_user_id = $user->id;
+        $app->rank = $app->calculateScore();
+        $app->status = 'Pending';
+        $app->save();
+
+        DB::commit();
+        return back()->with('success', 'Your application has been submitted successfully.');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', 'Job Application Failed: ' . $e->getMessage());
+    }
+}
+
 
     public function personalDetail(Request $request)
     {
@@ -356,6 +379,7 @@ class HomeController extends Controller
             $user->email_address = $request->mail;
             $user->nationality = $request->nationality;
             $user->title = $request->title;
+            $user->date_of_birth = $request->dob;
             $user->save();
 
             if ($request->hasFile('nationalId')) {
@@ -414,6 +438,7 @@ class HomeController extends Controller
             $exp->fromdate = $request->fromDate;
             $exp->toDate = $request->toDate;
             $exp->decription = $request->description;
+            $exp->accumulated = $request->totalExp;
             $exp->save();
             DB::commit();
             return back()->with('success', 'Experience saved');
@@ -430,7 +455,7 @@ class HomeController extends Controller
 
             DB::beginTransaction();
             $aca = new Education;
-            $aca->applicant_id = Auth::user()->portalUser->id;
+            $aca->user_id = Auth::user()->portalUser->id;
             $aca->institution = $request->school;
             $aca->start_date = $request->fromDate;
             $aca->end_date = $request->toDate;
@@ -469,7 +494,7 @@ class HomeController extends Controller
             $skills  = explode(',', $request->skills);
             foreach ($skills as $skill) {
                 $sk = new UserSkill;
-                $sk->user_id = Auth::user()->portalUser->id;
+                $sk->user_id = Auth::user()->id;
                 $sk->skill = $skill;
                 $sk->save();
             }
@@ -513,15 +538,39 @@ class HomeController extends Controller
         }
     }
 
-    public function updateUserAccount(){
+    public function updateUserAccount(Request $request)
+    {
+        try {
+            DB::beginTransaction();
 
-        try{
+            $userId = Auth::id(); // Gets the authenticated user's ID
 
+            // Find the existing user account or create a new one
+            $acc = UserAccountSetting::firstOrCreate(
+                ['user_id' => $userId],
 
-        }catch(Exception $e){
+                [
+                    'country' => $request->country,
+                   'city' => $request->city,
+                    'province' => $request->province,
+                    'job_preference' => $request->prefered,
+                    'is_available' => $request->availability,
+                    'is_public' => $request->visibility
+                ]
+            );
+            $acc->country = $request->country;
+            $acc->city = $request->city;
+            $acc->province = $request->province;
+            $acc->job_preference = $request->prefered;
+            $acc->is_available = $request->availability;
+            $acc->is_public = $request->visibility;
+            $acc->save();
 
+            DB::commit();
+            return back()->with('success', 'Account details updated successfully');
+        } catch (Exception $e) {
             DB::rollback();
-            return back()->with('error', 'failed to update account details'.$e);
+            return back()->with('error', 'Failed to update account details: ' . $e->getMessage());
         }
     }
 
