@@ -129,19 +129,31 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div class="recommendations mt-4">
-                                    @if(count($recommendations) > 0)
-                                        <ul>
-                                            @foreach($recommendations as $job)
-                                                <li>
-                                                    <strong>{{ $job['title'] }}</strong> — Match Score: {{ number_format($job['score'] * 100, 2) }}%
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    @else
-                                        <p>No recommendations available at the moment.</p>
-                                    @endif
-                                </div>
+                                <table border="1" cellpadding="10" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Description</th>
+                                            <th>Posted On</th>
+                                            <th>Ending On</th>
+                                            <th>Requirements</th>
+                                            <th>Score</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($recommendations as $job)
+                                            <tr>
+                                                <td>{{ $job['title'] }}</td>
+                                                <td>{{ $job['description'] }}</td>
+                                                <td>{{ $job['posted_on'] }}</td>
+                                                <td>{{ $job['ending_on'] }}</td>
+                                                <td>{{ $job['requirements'] }}</td>
+                                                <td>{{ number_format($job['score'], 2) }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+
 
                                 {{-- <div class="table-responsive"> <!-- ✅ Wrap table here -->
                                     <livewire:client.posted-job />

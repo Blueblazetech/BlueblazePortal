@@ -3,7 +3,6 @@ import json
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
-print(Hello);
 # Read JSON input (from Laravel)
 input_data = json.loads(sys.stdin.read())
 
@@ -32,9 +31,17 @@ similarities = cosine_similarity(user_profile, all_vectors)[0]
 
 # Attach scores
 scored_jobs = [
-    {"id": job["id"], "title": job["title"], "score": float(sim)}
-    for job, sim in zip(all_jobs, similarities)
-    if job["id"] not in [j["id"] for j in applied_jobs]  # Exclude already applied
+    {
+        "id": job["id"],
+        "title": job["title"],
+        "description": job["description"],
+        "posted_on": job.get("posted_on", ""),
+        "ending_on": job.get("ending_on", ""),
+        "requirements": job.get("requirements", ""),
+        "score": float(sim)
+    }
+   for job, sim in zip(all_jobs, similarities)
+    if job["id"] not in [j["id"] for j in applied_jobs] and float(sim) > 0  # Exclude already applied
 ]
 
 # Sort and pick top 5

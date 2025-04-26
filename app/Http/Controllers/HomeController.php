@@ -604,20 +604,20 @@ public function applyNow(Request $request)
 
     private function getRecommendations($userId)
     {
-        // Fetch applied jobs
-        $appliedJobs = \DB::table('job_applicants')
+            // Fetch applied jobs
+            $appliedJobs = \DB::table('job_applicants')
             ->join('jobs', 'job_applicants.job_id', '=', 'jobs.id')
             ->where('job_applicants.user_id', $userId)
-            ->select('jobs.id', 'jobs.title', 'jobs.description')
+            ->select('jobs.id', 'jobs.title', 'jobs.description', 'jobs.posted_on', 'jobs.ending_on', 'jobs.requirements') // add fields
             ->get()
             ->toArray();
 
-
-        // Fetch all jobs
-        $allJobs = \DB::table('jobs')
-            ->select('id', 'title', 'description')
+            // Fetch all jobs
+            $allJobs = \DB::table('jobs')
+            ->select('id', 'title', 'description', 'posted_on', 'ending_on', 'requirements') // add fields
             ->get()
             ->toArray();
+
 
         // Prepare payload
         $payload = json_encode([
@@ -625,17 +625,31 @@ public function applyNow(Request $request)
             'all_jobs' => $allJobs,
         ]);
 
-        // Run the Python script
-        $process = new Process(['python3', base_path('scripts/recommend.py')]);
+        // Prepare paths
+        $pythonBin = 'C:\\Users\\blueb\\AppData\\Local\\Programs\\Python\\Python310\\python.exe';
+        $scriptPath = base_path('scripts/recommend.py');
+
+        // Set environment variables
+        $env = [
+            'SYSTEMROOT' => getenv('SYSTEMROOT'),
+            'PATH'       => getenv('PATH'),
+        ];
+
+        // Run the process
+        $process = new Process([$pythonBin, $scriptPath], null, $env);
         $process->setInput($payload);
         $process->run();
 
         if (!$process->isSuccessful()) {
-            return []; // If Python fails, just return empty recommendations
+            dd('Error:', $process->getErrorOutput());
+            return [];
         }
 
         return json_decode($process->getOutput(), true);
     }
+
+
+
 
 
 }

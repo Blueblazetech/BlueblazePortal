@@ -1,9 +1,9 @@
+print("Python script recommend.py is running!")
 import sys
 import json
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
-print('Hello')
 # Read JSON input (from Laravel)
 input_data = json.loads(sys.stdin.read())
 
@@ -31,11 +31,21 @@ user_profile = np.mean(applied_vectors.toarray(), axis=0).reshape(1, -1)
 similarities = cosine_similarity(user_profile, all_vectors)[0]
 
 # Attach scores
+# Attach scores with full fields
 scored_jobs = [
-    {"id": job["id"], "title": job["title"], "score": float(sim)}
+    {
+        "id": job["id"],
+        "title": job["title"],
+        "description": job["description"],
+        "posted_on": job.get("posted_on", ""),
+        "ending_on": job.get("ending_on", ""),
+        "requirements": job.get("requirements", ""),
+        "score": float(sim)
+    }
     for job, sim in zip(all_jobs, similarities)
     if job["id"] not in [j["id"] for j in applied_jobs]  # Exclude already applied
 ]
+
 
 # Sort and pick top 5
 top_jobs = sorted(scored_jobs, key=lambda x: x["score"], reverse=True)[:5]
