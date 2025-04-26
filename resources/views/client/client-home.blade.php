@@ -128,8 +128,8 @@
                                     </h4>
                                 </div>
                             </div>
-                            <div class="card-body">
-                                <table border="1" cellpadding="10" cellspacing="0">
+                            <div class="card-body table-responsive">
+                                <table class="table table-stripped">
                                     <thead>
                                         <tr>
                                             <th>Title</th>
@@ -137,6 +137,7 @@
                                             <th>Posted On</th>
                                             <th>Ending On</th>
                                             <th>Requirements</th>
+                                            <th>Action</th>
                                             <th>Score</th>
                                         </tr>
                                     </thead>
@@ -148,6 +149,9 @@
                                                 <td>{{ $job['posted_on'] }}</td>
                                                 <td>{{ $job['ending_on'] }}</td>
                                                 <td>{{ $job['requirements'] }}</td>
+                                                <td>
+                                                    <a class="btn-success btn-sm btn-round btn-block" href="{{route('apply-now')}}">Apply</a><a class="btn-danger btn-block btn-sm btn-round" href="{{route('apply-now')}}"><i class = "feather icon-heart"></i></a>
+                                                </td>
                                                 <td>{{ number_format($job['score'], 2) }}</td>
                                             </tr>
                                         @endforeach
@@ -180,7 +184,7 @@
                                         <h5>Job Posts</h5>
                                     </div>
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body table-responsive">
 
                                     <livewire:client.posted-job />
 
