@@ -648,8 +648,33 @@ public function applyNow(Request $request)
         return json_decode($process->getOutput(), true);
     }
 
+    public function getPredictedJobTrends()
+    {
+        $jobs = DB::table('jobs')
+            ->select(
+                DB::raw('YEAR(posted_on) as year'),
+                DB::raw('COUNT(*) as total_jobs')
+            )
+            ->groupBy('year')
+            ->orderBy('year')
+            ->get();
 
+        $data = $jobs->map(function ($job) {
+            return [
+                'year' => (int) $job->year,
+                'total_jobs' => (int) $job->total_jobs
+            ];
+        });
 
+        // 2. Call Python Server (Flask API)
+        $response = Http::post('http://127.0.0.1:5000/predict', $data->toArray());
+
+        if ($response->successful()) {
+            return response()->json($response->json());
+        } else {
+            return response()->json(['error' => 'Could not fetch prediction'], 500);
+        }
+    }
 
 
 }
