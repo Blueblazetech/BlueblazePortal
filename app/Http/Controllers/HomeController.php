@@ -626,7 +626,7 @@ public function applyNow(Request $request)
         ]);
 
         // Run the Python script
-        $process = new Process(['python3', base_path('recommend.py')]);
+        $process = new Process(['python3', base_path('scripts/recommend.py')]);
         $process->setInput($payload);
         $process->run();
 
