@@ -129,9 +129,23 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div class="table-responsive"> <!-- ✅ Wrap table here -->
-                                    <livewire:client.posted-job />
+                                <div class="recommendations mt-4">
+                                    @if(count($recommendations) > 0)
+                                        <ul>
+                                            @foreach($recommendations as $job)
+                                                <li>
+                                                    <strong>{{ $job['title'] }}</strong> — Match Score: {{ number_format($job['score'] * 100, 2) }}%
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    @else
+                                        <p>No recommendations available at the moment.</p>
+                                    @endif
                                 </div>
+
+                                {{-- <div class="table-responsive"> <!-- ✅ Wrap table here -->
+                                    <livewire:client.posted-job />
+                                </div> --}}
                             </div>
                         </div>
                     </div>

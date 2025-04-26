@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use DB;
 use Exception;
 use Carbon\Carbon;
 use App\Models\Age;
@@ -28,9 +29,9 @@ use App\Models\UserExperience;
 use App\Models\userCertificates;
 use App\Models\UserSocialAccount;
 use App\Models\UserAccountSetting;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\AcademicQualification;
+use Symfony\Component\Process\Process;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -147,7 +148,11 @@ class HomeController extends Controller
     public function general()
     {
 
-        return view('client.client-home');
+        $userId = Auth::id(); // Get the logged-in user ID
+        // Fetch recommendations
+        $recommendations = $this->getRecommendations($userId);
+        return view('client.client-home', compact('recommendations'));
+
     }
 
     public function login()
@@ -596,4 +601,41 @@ public function applyNow(Request $request)
             return back()->with('error', 'Failed to update social media accounts');
         }
     }
+
+    private function getRecommendations($userId)
+    {
+        // Fetch applied jobs
+        $appliedJobs = \DB::table('job_applicants')
+            ->join('jobs', 'job_applicants.job_id', '=', 'jobs.id')
+            ->where('job_applicants.user_id', $userId)
+            ->select('jobs.id', 'jobs.title', 'jobs.description')
+            ->get()
+            ->toArray();
+
+
+        // Fetch all jobs
+        $allJobs = \DB::table('jobs')
+            ->select('id', 'title', 'description')
+            ->get()
+            ->toArray();
+
+        // Prepare payload
+        $payload = json_encode([
+            'applied_jobs' => $appliedJobs,
+            'all_jobs' => $allJobs,
+        ]);
+
+        // Run the Python script
+        $process = new Process(['python3', base_path('recommend.py')]);
+        $process->setInput($payload);
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            return []; // If Python fails, just return empty recommendations
+        }
+
+        return json_decode($process->getOutput(), true);
+    }
+
+
 }
