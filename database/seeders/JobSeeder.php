@@ -22,14 +22,17 @@ class JobSeeder extends Seeder
             'Cybersecurity Analyst', 'Web Developer', 'Cloud Solutions Architect'
         ];
 
-        for ($i = 1; $i <= 100; $i++) {
-            $randomPostedOn = Carbon::create(2025, 4, rand(1, 30)); // Random day in April 2025
-            $randomEndingOn = (clone $randomPostedOn)->addDays(rand(7, 45)); // Ending between 1 week to 1.5 months later
+        for ($i = 1; $i <= 10000; $i++) {
+            // Random year from 2015 to 2025
+            $randomYear = rand(2015, 2025);
+            // Random month and day
+            $randomMonth = rand(1, 12);
+            $randomDay = rand(1, 28); // safe to avoid invalid dates like Feb 30
 
-            // Ensure ending_on doesn't go too far (max May 31, 2025)
-            if ($randomEndingOn->gt(Carbon::create(2025, 5, 31))) {
-                $randomEndingOn = Carbon::create(2025, 5, rand(20, 31));
-            }
+            $randomPostedOn = Carbon::create($randomYear, $randomMonth, $randomDay);
+
+            // Ending date between 7 and 60 days after posted date
+            $randomEndingOn = (clone $randomPostedOn)->addDays(rand(7, 60));
 
             DB::table('jobs')->insert([
                 'title' => $titles[array_rand($titles)],
@@ -51,7 +54,6 @@ class JobSeeder extends Seeder
                 'status' => 'Active'
             ]);
         }
-
-    }
+}
 }
 }

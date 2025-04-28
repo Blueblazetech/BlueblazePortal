@@ -1,50 +1,59 @@
-import sys
-import json
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-import numpy as np
-# Read JSON input (from Laravel)
-input_data = json.loads(sys.stdin.read())
+print('Running flask now')
 
-applied_jobs = input_data['applied_jobs']
-all_jobs = input_data['all_jobs']
+from flask import Flask, request, jsonify
+import pandas as pd
+from statsmodels.tsa.arima.model import ARIMA
 
-# Exit if no applied jobs
-if not applied_jobs:
-    print(json.dumps([]))
-    sys.exit(0)
+app = Flask(__name__)
 
-# Text lists
-applied_texts = [job['description'] for job in applied_jobs]
-all_texts = [job['description'] for job in all_jobs]
+@app.route('/predict', methods=['POST'])
+def predict():
+    data = request.get_json()
 
-# TF-IDF Vectorization
-vectorizer = TfidfVectorizer(stop_words='english')
-all_vectors = vectorizer.fit_transform(all_texts)
-applied_vectors = vectorizer.transform(applied_texts)
+    # Check if data actually has jobs key
+    if 'jobs' not in data:
+        return jsonify([])  # return empty if no jobs provided
 
-# Mean profile
-user_profile = np.mean(applied_vectors.toarray(), axis=0).reshape(1, -1)
+    df = pd.DataFrame(data['jobs'])
 
-# Similarities
-similarities = cosine_similarity(user_profile, all_vectors)[0]
+    predictions = []
 
-# Attach scores
-scored_jobs = [
-    {
-        "id": job["id"],
-        "title": job["title"],
-        "description": job["description"],
-        "posted_on": job.get("posted_on", ""),
-        "ending_on": job.get("ending_on", ""),
-        "requirements": job.get("requirements", ""),
-        "score": float(sim)
-    }
-   for job, sim in zip(all_jobs, similarities)
-    if job["id"] not in [j["id"] for j in applied_jobs] and float(sim) > 0  # Exclude already applied
-]
+    # Group by job title
+    for title, group in df.groupby('title'):
+        group = group.set_index('year')
+        group.index = pd.to_datetime(group.index, format='%Y')  # ensure datetime index
+        group = group.asfreq('Y')
 
-# Sort and pick top 5
-top_jobs = sorted(scored_jobs, key=lambda x: x["score"], reverse=True)[:5]
+        # Drop any rows with NaN
+        group = group.dropna()
 
-print(json.dumps(top_jobs))
+        if len(group) == 0:
+            continue  # skip empty groups
+
+        if len(group) >= 2:
+            # Use ARIMA if we have enough data
+            try:
+                model = ARIMA(group['total_jobs'], order=(1, 1, 1))
+                model_fit = model.fit()
+                forecast = model_fit.forecast(steps=5)
+            except Exception as e:
+                print(f"ARIMA error for {title}: {str(e)}")
+                forecast = [group['total_jobs'].iloc[-1]] * 5  # fallback: repeat last value
+        else:
+            # If only 1 record, simulate growth
+            last_value = group['total_jobs'].iloc[-1]
+            forecast = [last_value + (i * 1) for i in range(1, 6)]  # +1 every year
+
+        start_year = group.index[-1].year + 1
+
+        for i, value in enumerate(forecast):
+            predictions.append({
+                'title': title,
+                'year': start_year + i,
+                'predicted_jobs': max(0, int(value))  # make sure no negative jobs
+            })
+
+    return jsonify(predictions)
+
+if __name__ == '__main__':
+    app.run(debug=False)

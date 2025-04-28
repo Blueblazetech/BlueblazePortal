@@ -17,5 +17,7 @@ use App\Http\Controllers\JobTrendsController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
-Route::middleware('auth')->get('/predict-job-trends', [JobTrendsController::class, 'getPredictedJobTrends']);
 });
+Route::get('/predict-job-trends', [JobTrendsController::class, 'getPredictedJobTrends']);
+
+
