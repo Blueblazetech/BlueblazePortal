@@ -1,59 +1,83 @@
-print('Running flask now')
+import sys
+import json
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
-from flask import Flask, request, jsonify
-import pandas as pd
-from statsmodels.tsa.arima.model import ARIMA
+# Helper: Normalize text
+def normalize(text):
+    return text.lower().strip()
 
-app = Flask(__name__)
+def log(msg):
+    print(msg, file=sys.stderr)  # Log to stderr (capturable by Laravel)
 
-@app.route('/predict', methods=['POST'])
-def predict():
-    data = request.get_json()
+log("Python script recommend.py is running!")
 
-    # Check if data actually has jobs key
-    if 'jobs' not in data:
-        return jsonify([])  # return empty if no jobs provided
+try:
+    input_data = json.loads(sys.stdin.read())
+except Exception as e:
+    log(f"Failed to read input: {str(e)}")
+    print(json.dumps([]))
+    sys.exit(1)
 
-    df = pd.DataFrame(data['jobs'])
+applied_jobs = input_data.get('applied_jobs', [])
+all_jobs = input_data.get('all_jobs', [])
 
-    predictions = []
+log(f"Received {len(applied_jobs)} applied jobs and {len(all_jobs)} total jobs")
 
-    # Group by job title
-    for title, group in df.groupby('title'):
-        group = group.set_index('year')
-        group.index = pd.to_datetime(group.index, format='%Y')  # ensure datetime index
-        group = group.asfreq('Y')
+# Exit if no applied jobs
+if not applied_jobs:
+    log("No applied jobs found.")
+    print(json.dumps([]))
+    sys.exit(0)
 
-        # Drop any rows with NaN
-        group = group.dropna()
+# Normalize and extract descriptions
+applied_texts = [normalize(job.get('description', '')) for job in applied_jobs if job.get('description')]
+all_texts = [normalize(job.get('description', '')) for job in all_jobs if job.get('description')]
 
-        if len(group) == 0:
-            continue  # skip empty groups
+# Double-check for empty descriptions
+if not all(applied_texts) or not all(all_texts):
+    log("One or more job descriptions are empty after normalization.")
+    print(json.dumps([]))
+    sys.exit(0)
 
-        if len(group) >= 2:
-            # Use ARIMA if we have enough data
-            try:
-                model = ARIMA(group['total_jobs'], order=(1, 1, 1))
-                model_fit = model.fit()
-                forecast = model_fit.forecast(steps=5)
-            except Exception as e:
-                print(f"ARIMA error for {title}: {str(e)}")
-                forecast = [group['total_jobs'].iloc[-1]] * 5  # fallback: repeat last value
-        else:
-            # If only 1 record, simulate growth
-            last_value = group['total_jobs'].iloc[-1]
-            forecast = [last_value + (i * 1) for i in range(1, 6)]  # +1 every year
+# TF-IDF Vectorization
+try:
+    vectorizer = TfidfVectorizer(stop_words='english')
+    all_vectors = vectorizer.fit_transform(all_texts)
+    applied_vectors = vectorizer.transform(applied_texts)
+except Exception as e:
+    log(f"TF-IDF Vectorization failed: {str(e)}")
+    print(json.dumps([]))
+    sys.exit(1)
 
-        start_year = group.index[-1].year + 1
+# Compute mean user profile
+user_profile = np.mean(applied_vectors.toarray(), axis=0).reshape(1, -1)
 
-        for i, value in enumerate(forecast):
-            predictions.append({
-                'title': title,
-                'year': start_year + i,
-                'predicted_jobs': max(0, int(value))  # make sure no negative jobs
-            })
+# Compute cosine similarity
+similarities = cosine_similarity(user_profile, all_vectors)[0]
+log(f"Similarity scores: {similarities[:10]}")
 
-    return jsonify(predictions)
+# Get list of applied job IDs
+applied_job_ids = [job["id"] for job in applied_jobs]
 
-if __name__ == '__main__':
-    app.run(debug=False)
+# Score and filter jobs
+scored_jobs = [
+    {
+        "id": job["id"],
+        "title": job.get("title", ""),
+        "description": job.get("description", ""),
+        "posted_on": job.get("posted_on", ""),
+        "ending_on": job.get("ending_on", ""),
+        "requirements": job.get("requirements", ""),
+        "score": float(sim)
+    }
+    for job, sim in zip(all_jobs, similarities)
+    if job["id"] not in applied_job_ids
+]
+
+# Sort and pick top 5 recommendations
+top_jobs = sorted(scored_jobs, key=lambda x: x["score"], reverse=True)[:5]
+
+log(f"Returning {len(top_jobs)} recommended jobs")
+print(json.dumps(top_jobs))

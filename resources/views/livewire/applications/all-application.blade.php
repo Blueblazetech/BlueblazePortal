@@ -29,6 +29,7 @@
             <th>
                 Date Applied
             </th>
+            <th>Rank</th>
             <th>
                 Action
             </th>
@@ -46,6 +47,8 @@
                 <td>{{$app->status}}</td>
                 <td>{{$app->resume ?? 'N/A'}}</td>
                 <td>{{$app->created_at}}</td>
+                <td>{{$app->rank}}</td>
+
                 <td>
                     <a href="#" class="btn btn-sm btn-round btn-primary">
                         Preview

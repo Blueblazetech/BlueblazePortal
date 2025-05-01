@@ -53,7 +53,7 @@
                                             </div>
                                             <div class="card-body">
                                                 <i class="feather icon-briefcase">
-                                                    {{ $job->qtn->qualification }}
+                                                    {{ $job->qtn ? $job->qtn->qualification : 'not provided' }}
                                                 </i>
                                             </div>
                                         </div>

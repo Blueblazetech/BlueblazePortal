@@ -142,20 +142,30 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($recommendations as $job)
+                                        @if (!empty($recommendations))
+                                            @foreach ($recommendations as $job)
+                                                <tr>
+                                                    <td>{{ $job['title'] }}</td>
+                                                    <td>{{ $job['description'] }}</td>
+                                                    <td>{{ $job['posted_on'] }}</td>
+                                                    <td>{{ $job['ending_on'] }}</td>
+                                                    <td>{{ $job['requirements'] }}</td>
+                                                    <td>
+                                                        <a class="btn-success btn-sm btn-round btn-block" href="{{ route('apply-now') }}">Apply</a>
+                                                        <a class="btn-danger btn-block btn-sm btn-round" href="{{ route('apply-now') }}">
+                                                            <i class="feather icon-heart"></i>
+                                                        </a>
+                                                    </td>
+                                                    <td>{{ number_format($job['score'], 2) }}</td>
+                                                </tr>
+                                            @endforeach
+                                        @else
                                             <tr>
-                                                <td>{{ $job['title'] }}</td>
-                                                <td>{{ $job['description'] }}</td>
-                                                <td>{{ $job['posted_on'] }}</td>
-                                                <td>{{ $job['ending_on'] }}</td>
-                                                <td>{{ $job['requirements'] }}</td>
-                                                <td>
-                                                    <a class="btn-success btn-sm btn-round btn-block" href="{{route('apply-now')}}">Apply</a><a class="btn-danger btn-block btn-sm btn-round" href="{{route('apply-now')}}"><i class = "feather icon-heart"></i></a>
-                                                </td>
-                                                <td>{{ number_format($job['score'], 2) }}</td>
+                                                <td colspan="7">No job recommendations found.</td>
                                             </tr>
-                                        @endforeach
+                                        @endif
                                     </tbody>
+
                                 </table>
 
 

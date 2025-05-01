@@ -152,6 +152,7 @@ class HomeController extends Controller
         // Fetch recommendations
         $recommendations = $this->getRecommendations($userId);
         return view('client.client-home', compact('recommendations'));
+        //    return view('client.client-home');
 
     }
 
