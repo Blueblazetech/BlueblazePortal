@@ -1,11 +1,13 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
+use Log;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Event;
 use Illuminate\validation\validationException;
 use Illuminate\Support\Facades\UsersMiddleware;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 
 class LoginController extends Controller
@@ -33,7 +35,10 @@ class LoginController extends Controller
 
     protected function authenticated(Request $request, $user)
     {
-        // dd($request);
+        Log::info('Login process initiated.');
+
+        Event::dispatch('login', [$user]);
+
         if ($user->isAdmin()) {
 
             return redirect()->route('ad-home');

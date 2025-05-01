@@ -81,6 +81,135 @@
         </div>
     </div>
     <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4>Job Predictions</h4>
+                <div id="chartContainer" style="width: 100%; height: 500px;">
+                    <canvas id="jobTrendsChart"></canvas>
+                </div>
+
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', async function() {
+                        try {
+                            const response = await fetch('/api/predict-job-trends', {
+                                headers: {
+                                    'Accept': 'application/json',
+                                    'X-Requested-With': 'XMLHttpRequest'
+                                }
+                            });
+
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+
+                            const predictions = await response.json();
+
+                            console.log('Predictions received:', predictions);
+
+                            // Group predictions by job title
+                            const grouped = {};
+                            predictions.forEach(pred => {
+                                if (!grouped[pred.title]) {
+                                    grouped[pred.title] = [];
+                                }
+                                grouped[pred.title].push({ year: pred.year, predicted_jobs: pred.predicted_jobs });
+                            });
+
+                            const years = [...new Set(predictions.map(item => item.year))].sort();
+                            const datasets = [];
+
+                            for (const [title, data] of Object.entries(grouped)) {
+                                datasets.push({
+                                    label: title,
+                                    data: years.map(year => {
+                                        const found = data.find(d => d.year === year);
+                                        return found ? found.predicted_jobs : null;
+                                    }),
+                                    borderWidth: 2,
+                                    fill: false,
+                                    tension: 0.4,
+                                    pointRadius: 4,
+                                    borderColor: randomColor(),
+                                    backgroundColor: randomColor(), // Also set the point color
+                                });
+                            }
+
+                            // Correct Random Color Generator
+                            function randomColor() {
+                                const r = Math.floor(Math.random() * 255);
+                                const g = Math.floor(Math.random() * 255);
+                                const b = Math.floor(Math.random() * 255);
+                                return `rgb(${r},${g},${b})`; // <-- Corrected string format!
+                            }
+
+                            const ctx = document.getElementById('jobTrendsChart').getContext('2d');
+                            const jobTrendsChart = new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: years,
+                                    datasets: datasets
+                                },
+                                options: {
+                                    responsive: true,
+                                    plugins: {
+                                        title: {
+                                            display: true,
+                                            text: 'Job Market Predictions Per Title (Next 5 Years)',
+                                            font: {
+                                                size: 20
+                                            }
+                                        },
+                                        tooltip: {
+                                            mode: 'index',
+                                            intersect: false
+                                        },
+                                        legend: {
+                                            position: 'bottom',
+                                            labels: {
+                                                usePointStyle: true,
+                                                pointStyle: 'circle',
+                                            }
+                                        }
+                                    },
+                                    interaction: {
+                                        mode: 'nearest',
+                                        axis: 'x',
+                                        intersect: false
+                                    },
+                                    scales: {
+                                        x: {
+                                            title: {
+                                                display: true,
+                                                text: 'Year'
+                                            }
+                                        },
+                                        y: {
+                                            title: {
+                                                display: true,
+                                                text: 'Predicted Job Openings'
+                                            },
+                                            beginAtZero: true,
+                                            ticks: {
+                                                precision: 0 // No decimals for job counts
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+
+                        } catch (error) {
+                            console.error('Error fetching or plotting job trends:', error);
+                        }
+                    });
+                    </script>
+
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
         <div class="card z-dept-1">
             <div class="card-header bg-primary">
                 <div class="card-title">
@@ -111,7 +240,10 @@
                             </div>
                         </div>
                         <div class="card-body">
-
+                            <h1>Recent Applications</h1>
+                            <div class="row table-responsive">
+                                <livewire:applications.all-application />
+                            </div>
                         </div>
                     </div>
                 </div>

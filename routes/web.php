@@ -17,13 +17,15 @@ Route::get('/', function () {
 
     return view('auth.login');
 
+
 });
 
 
 
 Auth::routes();
 
-Route::middleware('auth')->prefix('JobManagement')->group(function(){
+// Route::middleware('auth','admin')->prefix('JobManagement')->group(function(){
+    Route::middleware('auth',)->prefix('JobManagement')->group(function(){
 
     // Admin routes
     Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('ad-dashboard');
@@ -54,6 +56,17 @@ Route::middleware('auth')->prefix('JobManagement')->group(function(){
     Route::post('/user/apply-now', [App\Http\Controllers\HomeController::class, 'applyNow'])->name('apply-now');
     Route::post('/user/personal/detail', [App\Http\Controllers\HomeController::class, 'personalDetail'])->name('user-personal-detail');
     Route::post('/user/experience', [App\Http\Controllers\HomeController::class, 'userExperience'])->name('user-experience');
+    Route::post('/user/education', [App\Http\Controllers\HomeController::class, 'userEducation'])->name('user-education');
+    Route::post('/user/add/skill', [App\Http\Controllers\HomeController::class, 'userSkill'])->name('user-add-skills');
+    Route::post('/user/add/certificate', [App\Http\Controllers\HomeController::class, 'userCertificate'])->name('user-add-certificate');
+    Route::post('/user/add/socials', [App\Http\Controllers\HomeController::class, 'userSocial'])->name('user-add-socials');
+    Route::post('/user/update/Account', [App\Http\Controllers\HomeController::class, 'updateUserAccount'])->name('user-update-account');
+
+
+
+
+
+
 
 
 
@@ -67,6 +80,11 @@ Route::middleware('auth')->prefix('JobManagement')->group(function(){
 
 
 
+});
+
+Route::get('error', function(){
+
+    return view('rights');
 });
 
 Route::middleware('auth', 'user')->prefix('userJobs')->group(function(){
@@ -93,3 +111,4 @@ Route::prefix('jobManagement')->group(function () {
 
 
 });
+

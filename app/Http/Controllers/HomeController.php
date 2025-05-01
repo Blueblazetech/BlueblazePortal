@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use DB;
 use Exception;
 use Carbon\Carbon;
 use App\Models\Age;
@@ -10,7 +11,9 @@ use App\Models\User;
 use App\Models\Salary;
 use App\Models\JobSkill;
 use App\Models\JobTitle;
+use App\Models\Education;
 use App\Models\Locations;
+use App\Models\UserSkill;
 use App\Models\Experience;
 use App\Models\PortalUser;
 use App\Models\JobCategory;
@@ -23,9 +26,12 @@ use App\Models\JobCertificate;
 use App\Models\JobPostHistory;
 use App\Models\UserAttachment;
 use App\Models\UserExperience;
-use Illuminate\Support\Facades\DB;
+use App\Models\userCertificates;
+use App\Models\UserSocialAccount;
+use App\Models\UserAccountSetting;
 use Illuminate\Support\Facades\Auth;
 use App\Models\AcademicQualification;
+use Symfony\Component\Process\Process;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -60,7 +66,6 @@ class HomeController extends Controller
     {
 
         return view('admin.admin-home');
-
     }
 
     public function postedJobs()
@@ -89,7 +94,6 @@ class HomeController extends Controller
     {
 
         return view('jobs.expired-jobs');
-
     }
 
     public function approvedJobs()
@@ -144,7 +148,12 @@ class HomeController extends Controller
     public function general()
     {
 
-        return view('client.client-home');
+        $userId = Auth::id(); // Get the logged-in user ID
+        // Fetch recommendations
+        $recommendations = $this->getRecommendations($userId);
+        return view('client.client-home', compact('recommendations'));
+        //    return view('client.client-home');
+
     }
 
     public function login()
@@ -190,7 +199,13 @@ class HomeController extends Controller
 
         $path = Storage::disk('public')->put('jobAttachments', $file);
         return $path;
+    }
 
+    public function userfiles($file)
+    {
+
+        $path = Storage::disk('public')->put('userAttachments', $file);
+        return $path;
     }
 
     public function newPost(Request $request)
@@ -268,7 +283,6 @@ class HomeController extends Controller
                 $jobfile->path = $path;
                 $jobfile->name = $request->file_description;
                 $jobfile->save();
-
             }
 
             $history = new JobPostHistory;
@@ -280,16 +294,11 @@ class HomeController extends Controller
 
             DB::commit();
             return back()->with('success', 'your job has been posted successfully.');
-
         } catch (Exception $e) {
 
             DB::rollback();
             return back()->with('error', 'Failed to post your job vacancy' . $e);
         }
-
-
-
-
     }
 
     public function clientJobPreview($id)
@@ -308,38 +317,56 @@ class HomeController extends Controller
         return view('client.profileSettings', ['user' => $user]);
     }
 
-    public function applyNow(Request $request)
-    {
+public function applyNow(Request $request)
+{
+    $user = PortalUser::where('user_id', $request->userId)->first();
 
-        $user = PortalUser::where('user_id', $request->userId);
-        // dd($request);
-        try {
-            Db::beginTransaction();
+    if (!$user) {
+        return back()->with('error', 'User profile not found, kindly update your user profile settings.');
+    }
 
-            $app = new JobApplicant;
-            $app->portal_user_id = $user->id;
-            $app->user_id = Auth::user()->id;
-            $app->job_id = $request->jobId;
-            $app->name = $user->name;
-            $app->surname = $user->surname;
-            $app->contact = $user->contact;
-            $app->address = $user->address;
-            $app->email = $user->email;
-            $app->resume = $user->resume;
-            $app->video = $user->video;
-            $app->date_applied = Carbon::now();
-            $app->rank = $app->calculateScore();
-            $app->save();
-            DB::commit();
+    try {
+        // Check for duplicate application
+        $dup = JobApplicant::where(function ($query) use ($request) {
+            $query->where('user_id', Auth::user()->id)
+                  ->where('job_id', $request->jobId);
+        })->exists();
 
-        } catch (Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Job Application Failed' . $e);
+        if ($dup) {
+            return back()->with('error', 'You have already applied for this job.');
         }
 
+        DB::beginTransaction();
 
+        // Create job application
+        $app = new JobApplicant();
+        $app->user_id = Auth::user()->id;
+        $app->job_id = $request->jobId;
+        $app->name = $user->name;
+        $app->surname = $user->surname;
+        $app->gender = $user->gender;
+        $app->marital_status = $user->marital_status;
+        $app->contact_1 = $user->contact_1;
+        $app->contact_2 = $user->contact_2;
+        $app->physical_address = $user->physical_address;
+        $app->email_address = $user->email_address;
+        $app->nationality = $user->nationality;
+        $app->resume = $user->resume ? $user->resume->path : null;
+        $app->video = $user->video ? $user->video->path : null;
+        $app->portal_user_id = $user->id;
+        $app->rank = $app->calculateScore();
+        $app->status = 'Pending';
+        $app->save();
 
+        DB::commit();
+        return back()->with('success', 'Your application has been submitted successfully.');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', 'Job Application Failed: ' . $e->getMessage());
     }
+}
+
 
     public function personalDetail(Request $request)
     {
@@ -358,6 +385,7 @@ class HomeController extends Controller
             $user->email_address = $request->mail;
             $user->nationality = $request->nationality;
             $user->title = $request->title;
+            $user->date_of_birth = $request->dob;
             $user->save();
 
             if ($request->hasFile('nationalId')) {
@@ -398,11 +426,7 @@ class HomeController extends Controller
         } catch (Exception $e) {
             DB::rollBack();
             return back()->with('error', 'failed to update personal details' . $e);
-
         }
-
-
-
     }
 
     public function userExperience(Request $request)
@@ -420,14 +444,238 @@ class HomeController extends Controller
             $exp->fromdate = $request->fromDate;
             $exp->toDate = $request->toDate;
             $exp->decription = $request->description;
+            $exp->accumulated = $request->totalExp;
             $exp->save();
             DB::commit();
             return back()->with('success', 'Experience saved');
         } catch (Exception $e) {
 
             return back()->with('error', 'Failed to add experience records' . $e);
-
-
         }
     }
+
+    public function userEducation(Request $request)
+    {
+
+        try {
+
+            DB::beginTransaction();
+            $aca = new Education;
+            $aca->user_id = Auth::user()->portalUser->id;
+            $aca->institution = $request->school;
+            $aca->start_date = $request->fromDate;
+            $aca->end_date = $request->toDate;
+            $aca->level = $request->level;
+            if ($request->hasFile('SchoolFile')) {
+
+                $attach = $request->file('schoolFile');
+                $path = $this->userFiles($attach);
+
+                $file = new userAttachment;
+                $file->user_id = Auth::user()->portalUser->id;
+                $file->name = $request->getClientOriginalName();
+                $file->path = $path;
+                $file->status = 'active';
+                $file->save();
+            }
+
+            DB::commit();
+
+            return back()->with('success', 'Records added sucessfully');
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            return back()->with('error', 'Failed to Save the records' . $e);
+        }
+    }
+
+
+    public function userSkill(Request $request)
+    {
+
+
+        try {
+
+            DB::beginTransaction();
+            $skills  = explode(',', $request->skills);
+            foreach ($skills as $skill) {
+                $sk = new UserSkill;
+                $sk->user_id = Auth::user()->id;
+                $sk->skill = $skill;
+                $sk->save();
+            }
+
+            DB::commit();
+
+            return back()->with('success', 'Skills successfully added to your profile');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return back()->with('error', 'Failed to add skills to your profile' . $e);
+        }
+    }
+
+    public function userCertificate(Request $request)
+    {
+
+        // dd($request);
+        try {
+
+            DB::beginTransaction();
+            $cert = new userCertificates;
+            $cert->user_id = Auth::user()->portalUser->id;
+            $cert->institution = $request->institution;
+            $cert->program = $request->program;
+            $cert->from_date = $request->fromDate;
+            $cert->to_date = $request->toDate;
+            if ($request->hasFile(key: 'certi_file')) {
+
+                $attach = $request->file('certi_file');
+                $path = $this->userFiles($attach);
+                $cert->name = $attach->getClientOriginalname();
+                $cert->path = $path;
+                $cert->status = 'active';
+                $cert->save();
+            }
+            DB::commit();
+            return back()->with('success', 'certificates saved succefully');
+        } catch (Exception $e) {
+            DB::rollback();
+            return back()->with('error', 'failed to save certificate' . $e);
+        }
+    }
+
+    public function updateUserAccount(Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $userId = Auth::id(); // Gets the authenticated user's ID
+
+            // Find the existing user account or create a new one
+            $acc = UserAccountSetting::firstOrCreate(
+                ['user_id' => $userId],
+
+                [
+                    'country' => $request->country,
+                   'city' => $request->city,
+                    'province' => $request->province,
+                    'job_preference' => $request->prefered,
+                    'is_available' => $request->availability,
+                    'is_public' => $request->visibility
+                ]
+            );
+            $acc->country = $request->country;
+            $acc->city = $request->city;
+            $acc->province = $request->province;
+            $acc->job_preference = $request->prefered;
+            $acc->is_available = $request->availability;
+            $acc->is_public = $request->visibility;
+            $acc->save();
+
+            DB::commit();
+            return back()->with('success', 'Account details updated successfully');
+        } catch (Exception $e) {
+            DB::rollback();
+            return back()->with('error', 'Failed to update account details: ' . $e->getMessage());
+        }
+    }
+
+    public function  userSocial(Request $request)
+    {
+
+        try {
+
+            DB::beginTransaction();
+            $soc = new UserSocialAccount;
+            $soc->user_id = Auth::user()->portalUser->id;
+            $soc->facebook = $request->facebook;
+            $soc->linked_in = $request->linkedIn;
+            $soc->twitter = $request->twitter;
+            $soc->instagram = $request->instagram;
+            $soc->save();
+
+            DB::commit();
+            return back()->with('success', 'Social accounts successfully updated');
+        } catch (\Exception $e) {
+
+            DB::rollback();
+            return back()->with('error', 'Failed to update social media accounts');
+        }
+    }
+
+    private function getRecommendations($userId)
+    {
+            // Fetch applied jobs
+            $appliedJobs = \DB::table('job_applicants')
+            ->join('jobs', 'job_applicants.job_id', '=', 'jobs.id')
+            ->where('job_applicants.user_id', $userId)
+            ->select('jobs.id', 'jobs.title', 'jobs.description', 'jobs.posted_on', 'jobs.ending_on', 'jobs.requirements') // add fields
+            ->get()
+            ->toArray();
+
+            // Fetch all jobs
+            $allJobs = \DB::table('jobs')
+            ->select('id', 'title', 'description', 'posted_on', 'ending_on', 'requirements') // add fields
+            ->get()
+            ->toArray();
+
+
+        // Prepare payload
+        $payload = json_encode([
+            'applied_jobs' => $appliedJobs,
+            'all_jobs' => $allJobs,
+        ]);
+
+        // Prepare paths
+        $pythonBin = 'C:\\Users\\blueb\\AppData\\Local\\Programs\\Python\\Python310\\python.exe';
+        $scriptPath = base_path('scripts/recommend.py');
+
+        // Set environment variables
+        $env = [
+            'SYSTEMROOT' => getenv('SYSTEMROOT'),
+            'PATH'       => getenv('PATH'),
+        ];
+
+        // Run the process
+        $process = new Process([$pythonBin, $scriptPath], null, $env);
+        $process->setInput($payload);
+        $process->run();
+
+        if (!$process->isSuccessful()) {
+            dd('Error:', $process->getErrorOutput());
+            return [];
+        }
+
+        return json_decode($process->getOutput(), true);
+    }
+
+    public function getPredictedJobTrends()
+    {
+        $jobs = DB::table('jobs')
+            ->select(
+                DB::raw('YEAR(posted_on) as year'),
+                DB::raw('COUNT(*) as total_jobs')
+            )
+            ->groupBy('year')
+            ->orderBy('year')
+            ->get();
+
+        $data = $jobs->map(function ($job) {
+            return [
+                'year' => (int) $job->year,
+                'total_jobs' => (int) $job->total_jobs
+            ];
+        });
+
+        // 2. Call Python Server (Flask API)
+        $response = Http::post('http://127.0.0.1:5000/predict', $data->toArray());
+
+        if ($response->successful()) {
+            return response()->json($response->json());
+        } else {
+            return response()->json(['error' => 'Could not fetch prediction'], 500);
+        }
+    }
+
+
 }

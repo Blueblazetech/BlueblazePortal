@@ -70,4 +70,38 @@ class Job extends Model
         return $this->hasOne(JobTitle::class, 'title');
     }
 
+    public function location(){
+
+        return $this->belongsTo(Locations::class, 'location_id');
+    }
+
+    public function qtn(){
+
+        return $this->belongsTo(AcademicQualification::class, 'qualifications');
+    }
+
+    public function type(){
+
+        return $this->belongsTo(EmploymentType::class, 'employment_type');
+    }
+
+    public function salaryRange(){
+
+        return $this->belongsTo(Salary::class, 'salary_range');
+    }
+
+    public function exp(){
+
+        return $this->belongsTo(Experience::class, 'experience');
+    }
+
+    public function jobApplicants(){
+
+        return $this->hasMany(JobApplicant::class, 'job_id');
+    }
+
+    public function ages(){
+
+        return $this->belongsTo(Age::class, 'age');
+    }
 }
