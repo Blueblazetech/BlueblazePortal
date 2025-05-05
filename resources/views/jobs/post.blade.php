@@ -129,7 +129,7 @@
                                 <select class="form-control" id="title" name="title_id">
                                     <option value="" selected> Select Job title</option>
                                     @foreach($titles as $title)
-                                    <option value="{{$title->id}}">
+                                    <option value="{{$title->title}}">
                                         {{$title->title}}</option>
                                     @endforeach
                                 </select>
@@ -247,7 +247,7 @@
                                 <label for="Certificates">
                                     <h4>Certifications</h4>
                                 </label>
-                                <div class="row card-block z-depth-1 card-outline border-r-3 ml-2 mr-2 mb-2">
+                                <div class="row card-block z-depth-0.5 card-outline border-r-3 ml-2 mr-2 mb-2">
                                     <div class="col-md-12 col-lg-12">
                                         <div class="dynamic-row">
                                             <h6 class="sub-title">List required Certificates here</h6>
@@ -331,7 +331,7 @@
                             </textarea>
                             </div>
                             <div class="col-md-6">
-                                <div class="card m-t-10 z-depth-2">
+                                <div class="card m-t-10 ">
                                     <div class="card-header bg-info">
                                         <div class="card-title">
                                             <h5 style="color: white">Upload File</h5>

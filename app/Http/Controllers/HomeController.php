@@ -29,7 +29,9 @@ use App\Models\UserExperience;
 use App\Models\userCertificates;
 use App\Models\UserSocialAccount;
 use App\Models\UserAccountSetting;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use App\Models\AcademicQualification;
 use Symfony\Component\Process\Process;
 use Illuminate\Support\Facades\Storage;
@@ -64,8 +66,28 @@ class HomeController extends Controller
     }
     public function adminDashboard()
     {
+        $data = [
+            'totalusers' => User::count(),
+            'totaljobs' => Job::count(),
+            'activejobs' => Job::where('status', 'active')->count(),
+            'pendingjobs' => JobApplicant::where('status', 'pending')->count(),
+            'rejectedjobs' => JobApplicant::where('status', 'rejected')->count(),
+            'approvedjobs' => JobApplicant::where('status', 'approved')->count()
 
-        return view('admin.admin-home');
+        ];
+
+        $jobsPerMonth = Job::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+        ->whereYear('created_at', Carbon::now()->year)
+        ->groupBy('month')
+        ->pluck('count', 'month')
+        ->toArray();
+
+    $monthlyCounts = [];
+    for ($i = 1; $i <= 12; $i++) {
+        $monthlyCounts[] = $jobsPerMonth[$i] ?? 0;
+    }
+
+        return view('admin.admin-home', compact('data', 'monthlyCounts'));
     }
 
     public function postedJobs()
@@ -627,13 +649,14 @@ public function applyNow(Request $request)
         ]);
 
         // Prepare paths
-        $pythonBin = 'C:\\Users\\blueb\\AppData\\Local\\Programs\\Python\\Python310\\python.exe';
+        // $pythonBin = 'C:\\Users\\blueb\\AppData\\Local\\Programs\\Python\\Python310\\python.exe';
+        $pythonBin = 'C:\\Users\\DELL\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe';
         $scriptPath = base_path('scripts/recommend.py');
 
         // Set environment variables
         $env = [
-            'SYSTEMROOT' => getenv('SYSTEMROOT'),
-            'PATH'       => getenv('PATH'),
+            'SYSTEMROOT'=> getenv('SYSTEMROOT'),
+            'PATH'=> getenv('PATH'),
         ];
 
         // Run the process

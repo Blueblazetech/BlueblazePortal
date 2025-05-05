@@ -13,7 +13,8 @@
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.5",
         "livewire/livewire": "^3.4",
-        "spatie/laravel-backup": "^8.6"
+        "spatie/laravel-backup": "^8.6",
+        "symfony/process": "^6.4"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.12",

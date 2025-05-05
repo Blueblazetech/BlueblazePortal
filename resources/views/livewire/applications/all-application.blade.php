@@ -55,11 +55,11 @@
                     </a>
                     @if($app->status == 'Pending')
                     <button type="button" class="btn btn-sm btn-round btn-warning" data-toggle="modal" data-target="#updateApplicationStatusModal" data-id="{{$app->id}}">
-                        Update Status
+                        COnsider Applicant
                     </button>
                     @endif
                     <button type="button" class="btn btn-sm btn-round btn-danger" data-toggle="modal" data-target="#deleteApplicationModal" data-id="{{$app->id}}">
-                        Delete
+                        Remove
                     </button>
                 </td>
                 </td>

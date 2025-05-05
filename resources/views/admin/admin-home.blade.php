@@ -4,6 +4,8 @@
 @section('page-css')
     <!--chartlist-->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets\bower_components\chartist\css\chartist.css') }}">
+    {{-- <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script> --}}
+
 @endsection
 
 @section('content')
@@ -11,7 +13,7 @@
         <div class="card user-widget-card bg-c-blue">
             <div class="card-block">
                 <i class="feather icon-user bg-simple-c-blue card1-icon"></i>
-                <h4>652</h4>
+                <h4>{{$data['totalusers']}}</h4>
                 <p>Total Users</p>
                 <a href="#!" class="more-info">Explore</a>
             </div>
@@ -21,7 +23,7 @@
         <div class="card user-widget-card bg-c-pink">
             <div class="card-block">
                 <i class="feather icon-home bg-simple-c-pink card1-icon"></i>
-                <h4>652</h4>
+                <h4>{{$data['totaljobs']}}</h4>
                 <p>Total Job Posts</p>
                 <a href="#!" class="more-info">Explore</a>
             </div>
@@ -31,7 +33,7 @@
         <div class="card user-widget-card bg-c-green">
             <div class="card-block">
                 <i class="feather icon-alert-triangle bg-simple-c-green card1-icon"></i>
-                <h4>652</h4>
+                <h4>{{$data['activejobs']}}</h4>
                 <p>Active Jobs</p>
                 <a href="#!" class="more-info">Explore</a>
             </div>
@@ -41,7 +43,7 @@
         <div class="card user-widget-card bg-c-yellow">
             <div class="card-block">
                 <i class="feather icon-twitter bg-simple-c-yellow card1-icon"></i>
-                <h4>652</h4>
+                <h4>{{$data['pendingjobs']}}</h4>
                 <p>Pending Applications</p>
                 <a href="#!" class="more-info">Explore</a>
             </div>
@@ -63,7 +65,7 @@
 
             </div>
             <div class="card-block">
-                <canvas id="myChart" width="400" height="250"></canvas>
+                <canvas id="jobsChart" width="400" height="250"></canvas>
             </div>
         </div>
     </div>
@@ -76,7 +78,7 @@
                 </div>
             </div>
             <div class="card-block-big">
-                <div id="monthly-graph" style="height: 370px"></div>
+                <div id="monthJobs" width="400" height="250"></div>
             </div>
         </div>
     </div>
@@ -258,4 +260,79 @@
     <script src="{{ asset('assets\js\pcoded.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets\pages\dashboard\crm-dashboard.min.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets\js\script.js') }}"></script>
+    <script>
+        const ctx = document.getElementById('jobsChart').getContext('2d');
+        const jobsChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pending', 'Approved', 'Rejected', 'Active'],
+                datasets: [{
+                    label: 'Job Status',
+                    data: [
+                        {{ $data['pendingjobs'] }},
+                        {{ $data['approvedjobs'] }},
+                        {{ $data['rejectedjobs'] }},
+                        {{ $data['activejobs'] }}
+                    ],
+                    backgroundColor: [
+                        'rgba(255, 206, 86, 0.8)',   // Pending - Yellow
+                        'rgba(75, 192, 192, 0.8)',   // Approved - Teal
+                        'rgba(255, 99, 132, 0.8)',   // Rejected - Red
+                        'rgba(54, 162, 235, 0.8)'    // Active - Blue
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    </script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script>
+    // Log for debugging — outside the object
+    console.log('Monthly counts', @json($monthlyCounts));
+
+    document.addEventListener("DOMContentLoaded", function () {
+        var options = {
+            chart: {
+                type: 'bar',
+                height: 370
+            },
+            series: [{
+                name: 'Job Posts',
+                data: @json($monthlyCounts)
+            }],
+            xaxis: {
+                categories: [
+                    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                ]
+            },
+            colors: ['#1E90FF'],
+            dataLabels: {
+                enabled: true
+            },
+            tooltip: {
+                y: {
+                    formatter: function (val) {
+                        return val + " jobs";
+                    }
+                }
+            }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#monthJobs"), options);
+        chart.render();
+    });
+</script>
+
 @endsection
+
+
+
